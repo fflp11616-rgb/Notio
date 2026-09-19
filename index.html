@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta id="themeColorMeta" name="theme-color" content="#07080c" media="(prefers-color-scheme: dark)">
   <meta id="themeColorMetaLight" name="theme-color" content="#e2e6ee" media="(prefers-color-scheme: light)">
   <title>Notio – Dein Notenmanager</title>
@@ -77,8 +77,7 @@
                   background-color 0.5s cubic-bezier(0.22, 1, 0.36, 1) !important;
     }
 
-  html { background-color: #101218; transition: background-color 0.4s ease; overscroll-behavior: none; overscroll-behavior-y: none; }
-  html:has(body.dark-mode) { background-color: #101218; }
+  html { min-height: 100%; overscroll-behavior: none; overscroll-behavior-y: none; }
     body { overscroll-behavior: none; overscroll-behavior-y: none; }
 
     body {
@@ -1084,7 +1083,6 @@
       if (meta) meta.content = bgColor;
       const metaLight = document.getElementById("themeColorMetaLight");
       if (metaLight) metaLight.content = bgColor;
-      document.documentElement.style.backgroundColor = bgColor;
       document.body.style.backgroundColor = bgColor;
     }
 
