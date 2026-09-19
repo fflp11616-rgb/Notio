@@ -1,3 +1,6 @@
+
+
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -92,19 +95,30 @@
       display: flex; justify-content: center; position: relative;
       transition: background 0.8s ease, color 0.4s ease; overflow-x: hidden;
     }
-    body::before, body::after { content: ""; position: fixed; width: 450px; height: 450px; border-radius: 50%; pointer-events: none; filter: blur(100px); opacity: calc(var(--has-accent) * (0.12 + var(--glow-intensity) * 6)); z-index: 0; transition: background 0.8s ease, opacity 0.8s ease; }
-    body::before { top: -180px; left: -160px; background: var(--accent-color); }
-    body::after { right: -180px; bottom: -180px; background: var(--accent-color); }
+    body::before, body::after {
+      content: ""; position: fixed; width: 760px; height: 760px; pointer-events: none;
+      background: radial-gradient(closest-side,
+        color-mix(in srgb, var(--accent-color) 92%, transparent) 0%,
+        color-mix(in srgb, var(--accent-color) 84%, transparent) 15%,
+        color-mix(in srgb, var(--accent-color) 62%, transparent) 40%,
+        color-mix(in srgb, var(--accent-color) 30%, transparent) 62%,
+        color-mix(in srgb, var(--accent-color) 8%, transparent) 82%,
+        transparent 100%);
+      opacity: calc(var(--has-accent) * (0.02 + var(--glow-intensity) * 8));
+      z-index: 0; transform: translateZ(0);
+      transition: --accent-color 0.8s ease, opacity 0.8s ease;
+    }
+    body::before { top: -335px; left: -315px; }
+    body::after { right: -335px; bottom: -335px; }
 
     .pattern-layer { position: fixed; top: calc(-300px - env(safe-area-inset-top)); left: -300px; right: -300px; bottom: calc(-300px - env(safe-area-inset-bottom)); background-repeat: repeat; background-size: 130px 130px; opacity: calc(0.85 + var(--glow-intensity) * 8); pointer-events: none; z-index: 0; transform: translateZ(0); -webkit-mask-image: radial-gradient(ellipse 90% 90% at center, black 45%, transparent 95%); mask-image: radial-gradient(ellipse 90% 90% at center, black 45%, transparent 95%); will-change: opacity; transition: opacity 0.6s ease; }
 
-    /* Farb-Streifen fuer iOS 26 Safari: Safari liest hier die Farbe fuer Status- und Tab-Leiste */
     .edge-tint { position: fixed; left: 0; width: 100%; height: 6px; z-index: 2000; pointer-events: none; }
     #edgeTintTop { top: 0; background-color: #07080c; }
     #edgeTintBottom { bottom: 0; background-color: #101218; }
 
     .app-container { width: 100%; max-width: 440px; position: relative; z-index: 1; transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-    body.modal-open .app-container > *:not(.modal-overlay) { opacity: 0; pointer-events: none; transform: scale(0.98); transition: opacity 0.3s ease, transform 0.3s ease; }
+    body.modal-open .app-container > *:not(.modal-overlay) { opacity: 0; pointer-events: none; transform: scale(0.98) translateZ(0); transition: opacity 0.3s ease, transform 0.3s ease; }
 
     .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
     .greeting-box { display: flex; flex-direction: column; }
@@ -116,7 +130,7 @@
     .icon-btn:hover { transform: scale(1.06); }
     .icon-btn:active { transform: scale(0.94); }
 
-    .glass-menu { position: absolute; top: 54px; right: 0; width: 310px; max-height: 75vh; overflow-y: auto; padding: 16px; border-radius: 25px; background: linear-gradient(135deg, rgba(255,255,255,0.20), rgba(255,255,255,0.05)), var(--glass-menu-bg); border: 1px solid var(--glass-border); backdrop-filter: blur(50px) saturate(130%); -webkit-backdrop-filter: blur(50px) saturate(130%); box-shadow: 0 35px 80px rgba(0,0,0,0.12), inset 0 1px 0 var(--glass-highlight); opacity: 0; transform: translateY(-10px) scale(0.96); pointer-events: none; transition: opacity 0.3s ease, transform 0.4s cubic-bezier(.16,1,.3,1); z-index: 100; }
+    .glass-menu { position: absolute; top: 54px; right: 0; width: 310px; max-height: 75vh; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; will-change: transform, opacity; padding: 16px; border-radius: 25px; background: linear-gradient(135deg, rgba(255,255,255,0.20), rgba(255,255,255,0.05)), var(--glass-menu-bg); border: 1px solid var(--glass-border); backdrop-filter: blur(36px) saturate(130%); -webkit-backdrop-filter: blur(36px) saturate(130%); box-shadow: 0 35px 80px rgba(0,0,0,0.12), inset 0 1px 0 var(--glass-highlight); opacity: 0; transform: translateY(-10px) scale(0.96); pointer-events: none; transition: opacity 0.3s ease, transform 0.4s cubic-bezier(.16,1,.3,1); z-index: 100; }
     .glass-menu.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
 
     .menu-category { margin-bottom: 12px; border-radius: 18px; border: 1px solid var(--glass-border); background: rgba(255, 255, 255, 0.10); overflow: hidden; }
@@ -126,35 +140,34 @@
     .menu-category-header:hover { background: rgba(255, 255, 255, 0.15); }
     .menu-category-arrow { font-size: 0.75rem; transition: transform 0.3s cubic-bezier(.16,1,.3,1); color: var(--text-sub); }
     .menu-category.expanded .menu-category-arrow { transform: rotate(180deg); }
-    .menu-category-content { 
-      max-height: 0; 
-      overflow: hidden; 
-      padding: 0 16px; 
+    .menu-category-content {
+      display: grid;
+      grid-template-rows: 0fr;
       opacity: 0;
-      transition: max-height 0.6s cubic-bezier(0.22, 1, 0.36, 1), 
-                  padding 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-                  opacity 0.45s ease;
-      will-change: max-height;
+      visibility: hidden;
+      transition: grid-template-rows 0.42s cubic-bezier(0.32, 0.72, 0, 1),
+                  opacity 0.22s ease,
+                  visibility 0s linear 0.42s;
     }
-    .menu-category.expanded .menu-category-content { 
-      max-height: 450px; 
-      padding: 4px 16px 16px 16px; 
+    .menu-category.expanded .menu-category-content {
+      grid-template-rows: 1fr;
       opacity: 1;
+      visibility: visible;
+      transition: grid-template-rows 0.42s cubic-bezier(0.32, 0.72, 0, 1),
+                  opacity 0.32s ease 0.06s,
+                  visibility 0s linear 0s;
     }
-    #detailFolderCategory.expanded .menu-category-content { 
-      max-height: 420px; 
-      padding-bottom: 20px;
-    }
+    .menu-category-clip { min-height: 0; overflow: hidden; }
+    .menu-category-pad { padding: 4px 16px 16px 16px; }
 
     .menu-section { margin-top: 12px; }
     .menu-label { margin-bottom: 6px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-sub); }
     .menu-item { width: 100%; padding: 12px 14px; border-radius: 14px; border: 1px solid transparent; background: transparent; color: var(--text-color); text-align: left; font-size: 0.85rem; font-weight: 650; cursor: pointer; transition: background 0.2s ease; }
     .menu-item:hover { background: rgba(255, 255, 255, 0.18); border-color: var(--glass-border); }
 
-    .widget-toggle-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-radius: 12px; background: var(--input-bg); border: 1px solid var(--glass-border); transition: background 0.2s ease; gap: 10px; }
+    .widget-toggle-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-radius: 12px; background: var(--input-bg); border: 1px solid var(--glass-border); transition: background 0.2s ease; gap: 10px; cursor: pointer; }
     .widget-toggle-item:hover { background: rgba(255, 255, 255, 0.28); }
-    .widget-toggle-label { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 650; color: var(--text-color); flex: 1; min-width: 0; cursor: pointer; padding: 4px 6px; border-radius: 8px; transition: background 0.2s ease; -webkit-user-select: none; user-select: none; }
-    .widget-toggle-label:hover { background: rgba(255, 255, 255, 0.12); }
+    .widget-toggle-label { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 650; color: var(--text-color); flex: 1; min-width: 0; cursor: pointer; padding: 4px 6px; border-radius: 8px; -webkit-user-select: none; user-select: none; }
     .widget-toggle-switch { width: 36px; height: 20px; border-radius: 10px; background: rgba(120, 120, 128, 0.30); position: relative; transition: background 0.25s ease; flex-shrink: 0; cursor: pointer; }
     .widget-toggle-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
     .widget-toggle-item.active .widget-toggle-switch { background: #34c759; }
@@ -184,14 +197,14 @@
     .widget-pos-num-item .num-sub { font-size: 0.68rem; color: var(--text-sub); }
     .widget-pos-actions { display: flex; gap: 10px; }
 
-    .glow-slider { width: 100%; -webkit-appearance: none; -moz-appearance: none; appearance: none; height: 6px; border-radius: 3px; background: var(--input-bg); border: 1px solid var(--glass-border); outline: none; margin: 8px 0 0 0; padding: 0; cursor: pointer; display: block; box-sizing: border-box; }
+    .glow-slider { touch-action: pan-y; width: 100%; -webkit-appearance: none; -moz-appearance: none; appearance: none; height: 6px; border-radius: 3px; background: var(--input-bg); border: 1px solid var(--glass-border); outline: none; margin: 8px 0 0 0; padding: 0; cursor: pointer; display: block; box-sizing: border-box; }
     .glow-slider::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: transparent; border: none; padding: 0; margin: 0; }
     .glow-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--text-color); cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.25); border: none; margin-top: -6px; }
     .glow-slider::-moz-range-track { height: 6px; border-radius: 3px; background: transparent; border: none; padding: 0; margin: 0; }
     .glow-slider::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--text-color); cursor: pointer; border: none; box-shadow: 0 2px 6px rgba(0,0,0,0.25); padding: 0; margin: 0; }
 
     .overview-card { padding: 18px 22px 18px 18px; border-radius: 28px; margin-bottom: 16px; text-align: center; background: linear-gradient(145deg, var(--glass-sheen-a), var(--glass-sheen-b)), var(--glass-bg); border: 1px solid var(--glass-border); backdrop-filter: blur(42px) saturate(120%); -webkit-backdrop-filter: blur(42px) saturate(120%); box-shadow: 0 30px 80px rgba(0,0,0,0.09), inset 0 1px 0 var(--glass-highlight); position: relative; overflow: hidden; user-select: none; touch-action: none; }
-    .overview-card::after { content: ""; position: absolute; width: 220px; height: 120px; left: 50%; top: -70px; transform: translateX(-50%); border-radius: 50%; background: var(--accent-color); filter: blur(60px); opacity: calc(var(--has-accent) * (0.2 + var(--glow-intensity) * 1.2)); pointer-events: none; }
+    .overview-card::after { content: ""; position: absolute; width: 400px; height: 300px; left: 50%; top: -160px; transform: translateX(-50%); background: radial-gradient(closest-side, color-mix(in srgb, var(--accent-color) 80%, transparent) 0%, color-mix(in srgb, var(--accent-color) 60%, transparent) 35%, color-mix(in srgb, var(--accent-color) 22%, transparent) 65%, transparent 100%); opacity: calc(var(--has-accent) * (0.05 + var(--glow-intensity) * 2.5)); pointer-events: none; }
     .widget-container { position: relative; width: 100%; height: 112px; overflow: hidden; }
     .widget-slides { display: flex; flex-direction: column; height: 100%; transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1); }
     .widget-slide { width: 100%; height: 112px; flex-shrink: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; cursor: pointer; }
@@ -219,9 +232,9 @@
     .quick-input { flex: 1; padding: 12px 16px; border-radius: 14px; border: 1px solid var(--glass-border); background: linear-gradient(135deg, var(--glass-sheen-a), var(--glass-sheen-b)), var(--glass-bg); backdrop-filter: blur(35px) saturate(115%); -webkit-backdrop-filter: blur(35px) saturate(115%); color: var(--text-color); font-size: 0.85rem; box-shadow: var(--glass-shadow); }
     .quick-input::placeholder { color: var(--text-sub); }
 
-    .btn-primary { border: 1px solid var(--glass-border); background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02)), var(--button-bg); color: var(--button-text); padding: 11px 18px; border-radius: 14px; font-size: 0.84rem; font-weight: 650; cursor: pointer; box-shadow: 0 8px 20px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.15); transition: transform 0.3s cubic-bezier(.16,1,.3,1), opacity 0.25s ease; }
-    .btn-primary:hover { transform: translateY(-2px); opacity: 0.92; }
-    .btn-primary:active { transform: scale(0.96); }
+    .btn-primary { border: 1px solid var(--glass-border); background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02)), var(--button-bg); color: var(--button-text); padding: 11px 18px; border-radius: 14px; font-size: 0.84rem; font-weight: 650; cursor: pointer; box-shadow: 0 8px 20px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.15); transform: translate3d(0, 0, 0); backface-visibility: hidden; -webkit-backface-visibility: hidden; will-change: transform; transition: transform 0.3s cubic-bezier(.16,1,.3,1), box-shadow 0.3s cubic-bezier(.16,1,.3,1), opacity 0.25s ease; }
+    .btn-primary:hover { transform: translate3d(0, -2px, 0); box-shadow: 0 12px 26px rgba(0,0,0,0.16), inset 0 1px 0 rgba(255,255,255,0.20); opacity: 0.94; }
+    .btn-primary:active { transform: translate3d(0, 0, 0) scale(0.97); box-shadow: 0 4px 12px rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.15); }
 
     .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .section-title { font-weight: 750; font-size: 0.95rem; }
@@ -282,15 +295,16 @@
     .time-picker-separator { font-size: 1.1rem; font-weight: 800; color: var(--text-color); padding-bottom: 2px; }
     .time-preview-badge { text-align: center; font-size: 0.78rem; font-weight: 700; color: var(--text-color); margin-top: 6px; padding: 6px; background: var(--input-bg); border-radius: 10px; border: 1px solid var(--glass-border); }
 
-    .modal-overlay { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity: 0; pointer-events: none; visibility: hidden; transition: opacity 0.3s ease, visibility 0s linear 0.3s; z-index: 1000; }
+    .modal-overlay { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity: 0; pointer-events: none; visibility: hidden; transition: opacity 0.3s ease, visibility 0s linear 0.3s; z-index: 1000; transform: translateZ(0); isolation: isolate; }
     .modal-overlay.open { opacity: 1; pointer-events: auto; visibility: visible; transition: opacity 0.3s ease, visibility 0s linear 0s; }
     .modal-card { width: 100%; max-width: 390px; max-height: 90vh; display: flex; flex-direction: column; padding: 20px 22px; border-radius: 26px; background: linear-gradient(145deg, var(--glass-sheen-a), var(--glass-sheen-b)), var(--glass-bg); border: 1px solid var(--glass-border); backdrop-filter: blur(45px) saturate(120%); -webkit-backdrop-filter: blur(45px) saturate(120%); box-shadow: 0 45px 100px rgba(0,0,0,0.35), inset 0 1px 0 var(--glass-highlight); transform: translateY(20px) scale(0.95); opacity: 0; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
     .modal-card::-webkit-scrollbar { display: none; }
     .modal-overlay.open .modal-card { transform: translateY(0) scale(1); opacity: 1; }
     .modal-title { margin-bottom: 8px; font-size: 1.05rem; font-weight: 750; flex-shrink: 0; }
     .modal-buttons { display: flex; gap: 10px; margin-top: 10px; flex-shrink: 0; }
-    .btn-cancel { flex: 1; padding: 10px 16px; border-radius: 13px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-color); font-size: 0.82rem; font-weight: 650; cursor: pointer; backdrop-filter: blur(20px); transition: background 0.2s ease; }
-    .btn-cancel:hover { background: rgba(255,255,255,0.35); }
+    .btn-cancel { flex: 1; padding: 10px 16px; border-radius: 13px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-color); font-size: 0.82rem; font-weight: 650; cursor: pointer; backdrop-filter: blur(20px); transform: translate3d(0, 0, 0); backface-visibility: hidden; -webkit-backface-visibility: hidden; will-change: transform; transition: transform 0.3s cubic-bezier(.16,1,.3,1), background 0.2s ease; }
+    .btn-cancel:hover { transform: translate3d(0, -2px, 0); background: rgba(255,255,255,0.35); }
+    .btn-cancel:active { transform: translate3d(0, 0, 0) scale(0.97); }
     body.dark-mode .btn-cancel:hover { background: rgba(255,255,255,0.10); }
     .name-input { width: 100%; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-color); font-size: 0.84rem; }
     .name-input::placeholder { color: var(--text-sub); }
@@ -398,15 +412,101 @@
       .glass-menu { right: -4px; width: min(310px, calc(100vw - 28px)); }
     }
 
+    /* ============================================================
+       DRUCKVORSCHAU
+       ============================================================ */
+    .print-preview { padding: 0; align-items: stretch; justify-content: flex-start; flex-direction: column; background: rgba(8, 10, 16, 0.72); z-index: 1300; }
+    .print-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: calc(env(safe-area-inset-top) + 12px) 16px 12px; flex-shrink: 0; }
+    .print-toolbar-title { font-size: 1.02rem; font-weight: 750; color: #fff; }
+    .print-toolbar-btns { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .pt-btn { border: 1px solid rgba(255,255,255,0.35); background: rgba(255,255,255,0.14); color: #fff; border-radius: 13px; padding: 9px 14px; font-size: 0.82rem; font-weight: 650; cursor: pointer; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); transition: transform 0.2s ease, background 0.2s ease; }
+    .pt-btn:hover { background: rgba(255,255,255,0.22); transform: translateY(-1px); }
+    .pt-btn.primary { background: rgba(255,255,255,0.92); color: #111; border-color: transparent; }
+    .pt-btn.primary:hover { background: #fff; }
+    .print-scroll { flex: 1; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding: 4px 14px calc(env(safe-area-inset-bottom) + 28px); }
+
+    .print-sheet {
+      --ps-accent: #1d1d1f;
+      --ps-accent-soft: rgba(29, 29, 31, 0.08);
+      background: #fff;
+      color: #1d1d1f;
+      width: 100%;
+      max-width: 794px;
+      margin: 0 auto;
+      padding: 44px 48px 34px;
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1.5;
+      box-shadow: 0 24px 70px rgba(0,0,0,0.5);
+      text-align: left;
+    }
+    .print-sheet * { color: inherit; }
+
+    .ps-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 14px; padding: 16px 0 14px; border-top: 5px solid var(--ps-accent); border-bottom: 1px solid #d8dbe2; margin-bottom: 26px; }
+    .ps-brand { font-size: 1.9em; font-weight: 800; letter-spacing: -0.6px; line-height: 1; color: var(--ps-accent); }
+    .ps-sub { margin-top: 7px; color: #6b7280; font-size: 0.74em; letter-spacing: 1.6px; text-transform: uppercase; font-weight: 800; }
+    .ps-meta { text-align: right; font-size: 0.82em; color: #4b5563; line-height: 1.6; }
+    .ps-meta strong { color: #1d1d1f; font-weight: 700; }
+
+    .ps-total { text-align: center; padding: 26px 18px 22px; margin-bottom: 28px; border: 1px solid #e5e7eb; border-radius: 14px; background: #fafbfc; background-image: linear-gradient(180deg, transparent 40%, var(--ps-accent-soft)); position: relative; overflow: hidden; }
+    .ps-total::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--ps-accent); }
+    .ps-total-label { text-transform: uppercase; letter-spacing: 2.4px; font-size: 0.7em; font-weight: 800; color: #6b7280; }
+    .ps-total-value { font-size: 4em; font-weight: 800; letter-spacing: -2.5px; line-height: 1.05; margin-top: 6px; color: var(--ps-accent); }
+    .ps-total-sub { font-size: 0.82em; color: #6b7280; margin-top: 8px; font-weight: 600; }
+
+    .ps-section { margin-bottom: 28px; break-inside: avoid-page; }
+    .ps-section-title { font-size: 0.74em; text-transform: uppercase; letter-spacing: 1.6px; color: #6b7280; margin-bottom: 10px; font-weight: 800; border-left: 3px solid var(--ps-accent); padding-left: 9px; }
+
+    .ps-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    .ps-table th { text-align: left; font-size: 0.68em; text-transform: uppercase; letter-spacing: 1.1px; color: #6b7280; padding: 8px 8px 10px; border-bottom: 2px solid var(--ps-accent); font-weight: 800; }
+    .ps-table th:first-child { width: 36%; }
+    .ps-table th:nth-child(2), .ps-table th:nth-child(3) { width: 24%; }
+    .ps-table th:last-child { width: 16%; text-align: right; }
+    .ps-table td { padding: 12px 8px; border-bottom: 1px solid #eef0f4; vertical-align: top; overflow-wrap: anywhere; font-size: 0.94em; }
+    .ps-table tr { break-inside: avoid; page-break-inside: avoid; }
+    .ps-table tbody tr:last-child td { border-bottom: 2px solid #1d1d1f; }
+    .ps-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 7px; vertical-align: 0; }
+    .ps-small { display: block; margin-top: 3px; font-size: 0.78em; color: #6b7280; font-weight: 500; }
+    .ps-avg { font-weight: 800; font-size: 1.22em; text-align: right; color: var(--ps-accent); }
+    .ps-none { color: #9ca3af; }
+    .ps-grade-list { display: flex; flex-wrap: wrap; gap: 4px; }
+    .ps-grade { display: inline-block; padding: 2px 7px; border-radius: 5px; background: #eef0f4; font-size: 0.82em; font-weight: 700; color: #374151; }
+    .ps-grade.ps-grade-good { background: #dcfce7; color: #166534; }
+    .ps-grade.ps-grade-ok { background: #fef3c7; color: #92400e; }
+    .ps-grade.ps-grade-bad { background: #fee2e2; color: #991b1b; }
+
+    .ps-events { margin-bottom: 28px; break-inside: avoid-page; }
+    .ps-events ul { list-style: none; }
+    .ps-events li { display: flex; gap: 10px; padding: 5px 0; border-bottom: 1px dotted #e5e7eb; align-items: baseline; font-size: 0.95em; }
+    .ps-ev-date { flex: 0 0 9em; color: #4b5563; font-weight: 600; }
+    .ps-ev-title { flex: 1; min-width: 0; overflow-wrap: anywhere; font-weight: 600; }
+    .ps-ev-rel { flex: 0 0 auto; color: #6b7280; font-size: 0.92em; }
+
+    .ps-hw-list { list-style: none; margin-top: 6px; }
+    .ps-hw-list li { display: flex; gap: 10px; padding: 7px 0; border-bottom: 1px dotted #e5e7eb; align-items: baseline; font-size: 0.95em; }
+    .ps-hw-dot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; align-self: center; }
+    .ps-hw-subject { font-weight: 700; flex: 0 0 auto; min-width: 6em; }
+    .ps-hw-desc { flex: 1; min-width: 0; color: #4b5563; overflow-wrap: anywhere; }
+    .ps-hw-due { flex: 0 0 auto; color: #6b7280; font-size: 0.9em; font-weight: 600; }
+    .ps-hw-list-done li { opacity: 0.55; }
+    .ps-hw-list-done .ps-hw-subject { text-decoration: line-through; }
+
+    .ps-empty { text-align: center; padding: 70px 20px; color: #6b7280; }
+    .ps-empty strong { display: block; font-size: 1.15em; margin-bottom: 4px; color: #1d1d1f; }
+
+    .ps-foot { margin-top: 26px; padding-top: 12px; border-top: 1px solid #eef0f4; text-align: center; font-size: 0.72em; color: #9ca3af; letter-spacing: 0.3px; }
+
     @media print {
-      body * { visibility: hidden; }
-      .app-container, .app-container * { visibility: visible; }
-      .app-container { position: absolute; left: 0; top: 0; padding: 0; }
-      .pattern-layer, .edge-tint, body::before, body::after,
-      .quick-input-bar, .header-actions, .icon-btn,
-      .tt-expand-btn, .modal-overlay, .widget-pos-overlay, .footer-buttons, .info-overlay { display: none !important; }
-      body { background: white !important; padding: 20px; }
-      .overview-card, .subject-card, .timetable-preview-vertical, .homework-box { background: white !important; border: 1px solid #ddd !important; box-shadow: none !important; backdrop-filter: none !important; }
+      @page { size: A4 portrait; margin: 14mm; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      html, body { background: #fff !important; }
+      body { display: block !important; padding: 0 !important; min-height: 0 !important; }
+      body > *:not(#printPreview) { display: none !important; }
+      body::before, body::after { display: none !important; }
+      #printPreview { position: static !important; display: block !important; opacity: 1 !important; visibility: visible !important; background: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; padding: 0 !important; transition: none !important; }
+      #printPreview .print-toolbar { display: none !important; }
+      #printPreview .print-scroll { overflow: visible !important; padding: 0 !important; }
+      .print-sheet { width: 100% !important; max-width: none !important; margin: 0 !important; padding: 0 !important; border-radius: 0 !important; box-shadow: none !important; font-size: 10.5pt; }
     }
 
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
@@ -442,32 +542,32 @@
               <div class="menu-category-header" onclick="toggleCategory('catGeneral')">
                 <span>👤 Allgemein</span><span class="menu-category-arrow">▼</span>
               </div>
-              <div class="menu-category-content">
+              <div class="menu-category-content"><div class="menu-category-clip"><div class="menu-category-pad">
                 <div class="menu-section">
                   <div class="menu-label">Dein Name</div>
                   <input type="text" id="nameInput" class="name-input" placeholder="Name eingeben..." oninput="updateName(this.value)">
                 </div>
-              </div>
+              </div></div></div>
             </div>
 
             <div class="menu-category" id="catWidget">
               <div class="menu-category-header" onclick="toggleCategory('catWidget')">
                 <span>🎛️ Haupt-Widget</span><span class="menu-category-arrow">▼</span>
               </div>
-              <div class="menu-category-content">
+              <div class="menu-category-content"><div class="menu-category-clip"><div class="menu-category-pad">
                 <div class="menu-section">
                   <div class="menu-label">Slides & Position</div>
                   <div style="font-size:0.72rem; color:var(--text-sub); margin-bottom: 8px;">Tippe auf den <strong>Namen</strong>, um die Position zu ändern. Der Schalter schaltet an/aus.</div>
                   <div id="widgetSlidesToggles" style="display: flex; flex-direction: column; gap: 6px;"></div>
                 </div>
-              </div>
+              </div></div></div>
             </div>
 
             <div class="menu-category" id="catDesign">
               <div class="menu-category-header" onclick="toggleCategory('catDesign')">
                 <span>🎨 Optik & Design</span><span class="menu-category-arrow">▼</span>
               </div>
-              <div class="menu-category-content">
+              <div class="menu-category-content"><div class="menu-category-clip"><div class="menu-category-pad">
                 <div class="menu-section"><button class="menu-item" onclick="toggleTheme()">🌓 Dark / Light Mode</button></div>
                 <div class="menu-section" style="margin-top: 10px;">
                   <div class="menu-label">Ambient-Farbe</div>
@@ -503,17 +603,18 @@
                   <div class="menu-label">Glow-Intensität</div>
                   <input type="range" min="0" max="0.02" step="0.001" value="0.005" class="glow-slider" id="glowIntensitySlider" oninput="setGlowIntensity(this.value)">
                 </div>
-              </div>
+              </div></div></div>
             </div>
 
             <div class="menu-category" id="catShare">
               <div class="menu-category-header" onclick="toggleCategory('catShare')">
                 <span>📤 Teilen & Export</span><span class="menu-category-arrow">▼</span>
               </div>
-              <div class="menu-category-content">
-                <div class="menu-section"><button class="menu-item" onclick="shareDataViaAirDrop()">📡 Per AirDrop / Link teilen</button></div>
-                <div class="menu-section" style="margin-top: 4px;"><button class="menu-item" onclick="window.print()">🖨️ Noten & Kalender drucken</button></div>
-              </div>
+              <div class="menu-category-content"><div class="menu-category-clip"><div class="menu-category-pad">
+                <div class="menu-section"><button class="menu-item" onclick="openBackupModal()">💾 Backup erstellen</button></div>
+                <div class="menu-section" style="margin-top: 4px;"><button class="menu-item" onclick="document.getElementById('backupFileInput').click()">📥 Backup einlesen</button><input type="file" id="backupFileInput" accept=".json,application/json,text/plain" style="display: none;" onchange="handleBackupFile(this)"></div>
+                <div class="menu-section" style="margin-top: 4px;"><button class="menu-item" onclick="openPrintPreview()">🖨️ Druckvorschau</button></div>
+              </div></div></div>
             </div>
           </div>
         </div>
@@ -832,6 +933,34 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="backupModal" onclick="closeBackupModal()">
+    <div class="modal-card" onclick="event.stopPropagation()" style="max-width: 340px;">
+      <div class="modal-title">Backup erstellen 💾</div>
+      <div id="backupModalText" style="font-size: 0.82rem; color: var(--text-sub); line-height: 1.5; margin-bottom: 14px;"></div>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <button class="btn-primary" id="backupShareBtn" style="width: 100%; padding: 12px;" onclick="backupShare()">📡 Teilen (AirDrop, Dateien …)</button>
+        <button class="btn-cancel" style="width: 100%; padding: 12px; flex: none;" onclick="backupSaveFile()">⬇️ Als Datei speichern</button>
+        <button class="btn-cancel" style="width: 100%; padding: 12px; flex: none;" onclick="closeBackupModal()">Abbrechen</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="noticeModal" onclick="closeNoticeModal()">
+    <div class="modal-card" onclick="event.stopPropagation()" style="max-width: 330px; background: linear-gradient(145deg, rgba(78, 48, 10, 0.80), rgba(36, 27, 16, 0.70)); border-color: rgba(255, 159, 10, 0.45);">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;"><span style="font-size: 1.4rem;" id="noticeIcon">ℹ️</span><div class="modal-title" id="noticeTitle" style="margin-bottom: 0; color: #ff9f0a;">Hinweis</div></div>
+      <div id="noticeText" style="font-size: 0.84rem; color: #fff; font-weight: 600; margin-bottom: 16px;"></div>
+      <button class="btn-primary" style="width: 100%; padding: 11px; background: rgba(255, 159, 10, 0.28); border-color: rgba(255, 159, 10, 0.6); color: #fff;" onclick="closeNoticeModal()">Okay</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="importConfirmModal" onclick="closeImportConfirmModal()">
+    <div class="modal-card" onclick="event.stopPropagation()" style="max-width: 340px;">
+      <div class="modal-title">Backup einlesen? 📥</div>
+      <div id="importConfirmText" style="font-size: 0.82rem; color: var(--text-sub); line-height: 1.5;"></div>
+      <div class="modal-buttons" style="margin-top: 14px;"><button class="btn-cancel" onclick="closeImportConfirmModal()">Abbrechen</button><button class="btn-primary" style="flex: 1;" onclick="confirmImportBackup()">Einlesen</button></div>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="glassErrorModal" onclick="closeGlassErrorModal()">
     <div class="modal-card" onclick="event.stopPropagation()" style="max-width: 330px; background: linear-gradient(145deg, rgba(60, 30, 35, 0.75), rgba(30, 25, 28, 0.65)); border-color: rgba(255, 90, 90, 0.35);">
       <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;"><span style="font-size: 1.4rem;">⚠️</span><div class="modal-title" style="margin-bottom: 0; color: #ff6b6b;">Ungültige Eingabe</div></div>
@@ -949,14 +1078,14 @@
         <div class="menu-category-header" onclick="toggleDetailFolder()" style="padding: 10px 14px; font-size: 0.74rem;">
           <span>📁 Fach verwalten</span><span class="menu-category-arrow">▼</span>
         </div>
-        <div class="menu-category-content" style="padding: 0 12px;">
+        <div class="menu-category-content"><div class="menu-category-clip"><div class="menu-category-pad" style="padding: 0 12px;">
           <div style="display: flex; flex-direction: column; gap: 6px; padding-bottom: 8px; padding-top: 4px;">
             <button class="btn-cancel" style="width: 100%; padding: 10px; font-size: 0.78rem;" onclick="openWeightModal()">⚖️ Noten-Gewichtung</button>
             <div style="height: 1px; background: var(--glass-border); margin: 4px 0;"></div>
             <button class="btn-cancel" style="width: 100%; padding: 8px; font-size: 0.74rem;" onclick="openSubjectEditModal()">✏️ Name & Icon ändern</button>
             <button class="btn-cancel" style="width: 100%; padding: 8px; font-size: 0.74rem; color: #ff3b30; border-color: rgba(255,59,48,0.3);" onclick="promptDeleteSubject()">🗑️ Fach löschen</button>
           </div>
-        </div>
+        </div></div></div>
       </div>
       <div style="margin-top: 10px;">
         <button class="btn-primary" style="width: 100%; padding: 11px;" onclick="closeSubjectDetail()">Schließen</button>
@@ -964,7 +1093,6 @@
     </div>
   </div>
 
-  <!-- WEIGHT MODAL (ganz unten, damit es immer über dem Fach-Detail liegt) -->
   <div class="modal-overlay" id="weightModal" onclick="handleModalBackground(event, 'weightModal')">
     <div class="modal-card" onclick="event.stopPropagation()" style="max-width: 360px;">
       <div class="modal-title">⚖️ Noten-Gewichtung</div>
@@ -981,6 +1109,53 @@
     </div>
   </div>
 
+  <div class="modal-overlay print-preview" id="printPreview">
+    <div class="print-toolbar">
+      <div class="print-toolbar-title">Druckvorschau</div>
+      <div class="print-toolbar-btns">
+        <button class="pt-btn" onclick="openPrintOptionsModal()">⚙️ Optionen</button>
+        <button class="pt-btn" onclick="closePrintPreview()">Schließen</button>
+        <button class="pt-btn primary" onclick="window.print()">🖨️ Drucken</button>
+      </div>
+    </div>
+    <div class="print-scroll"><section class="print-sheet" id="printSheet"></section></div>
+  </div>
+
+  <div class="modal-overlay" id="printOptionsModal" style="z-index: 1400;" onclick="closePrintOptionsModal()">
+    <div class="modal-card" onclick="event.stopPropagation()" style="max-width: 370px;">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+        <span style="font-size: 1.4rem;">🖨️</span>
+        <div class="modal-title" style="margin-bottom: 0;">Was soll gedruckt werden?</div>
+      </div>
+      <div style="font-size: 0.78rem; color: var(--text-sub); margin-bottom: 14px;">Wähle die Inhalte für deinen Ausdruck aus.</div>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div class="widget-toggle-item" data-print-opt="avg" onclick="togglePrintOption('avg')">
+          <div class="widget-toggle-label">📊 Gesamtschnitt</div>
+          <div class="widget-toggle-switch"></div>
+        </div>
+        <div class="widget-toggle-item" data-print-opt="subjects" onclick="togglePrintOption('subjects')">
+          <div class="widget-toggle-label">📚 Fächer & Noten</div>
+          <div class="widget-toggle-switch"></div>
+        </div>
+        <div class="widget-toggle-item" data-print-opt="exams" onclick="togglePrintOption('exams')">
+          <div class="widget-toggle-label">📌 Klausuren & Termine</div>
+          <div class="widget-toggle-switch"></div>
+        </div>
+        <div class="widget-toggle-item" data-print-opt="homework" onclick="togglePrintOption('homework')">
+          <div class="widget-toggle-label">📝 Offene Hausaufgaben</div>
+          <div class="widget-toggle-switch"></div>
+        </div>
+        <div class="widget-toggle-item" data-print-opt="doneHw" onclick="togglePrintOption('doneHw')">
+          <div class="widget-toggle-label">✅ Erledigte Hausaufgaben</div>
+          <div class="widget-toggle-switch"></div>
+        </div>
+      </div>
+      <div class="modal-buttons" style="margin-top: 16px;">
+        <button class="btn-primary" style="flex:1" onclick="closePrintOptionsModal()">Fertig</button>
+      </div>
+    </div>
+  </div>
+
   <script>
 
     let appSettings = {
@@ -991,7 +1166,8 @@
       homework: [],
       weights: {},
       slideEnabled: { avg: true, exam: true, cal: true, hw: true },
-      slideOrder: ["avg", "exam", "cal", "hw"]
+      slideOrder: ["avg", "exam", "cal", "hw"],
+      printOptions: { avg: true, subjects: true, exams: true, homework: true, doneHw: false }
     };
 
     let selectedEmoji = "📚"; let selectedEditEmoji = "📚";
@@ -1013,6 +1189,7 @@
     const FALLBACK_COLOR = "#007aff";
     const MONTH_NAMES_LONG = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
     const DEFAULT_SLIDE_ORDER = ["avg", "exam", "cal", "hw"];
+    const DEFAULT_PRINT_OPTIONS = { avg: true, subjects: true, exams: true, homework: true, doneHw: false };
 
     function initApp() {
       const saved = localStorage.getItem("gradeflow_settings");
@@ -1031,6 +1208,13 @@
       if (!appSettings.subjectColors) appSettings.subjectColors = {};
       if (!appSettings.homework) appSettings.homework = [];
       if (!appSettings.weights) appSettings.weights = {};
+      if (!appSettings.printOptions || typeof appSettings.printOptions !== "object") {
+        appSettings.printOptions = { ...DEFAULT_PRINT_OPTIONS };
+      } else {
+        Object.keys(DEFAULT_PRINT_OPTIONS).forEach(k => {
+          if (typeof appSettings.printOptions[k] !== "boolean") appSettings.printOptions[k] = DEFAULT_PRINT_OPTIONS[k];
+        });
+      }
 
       const savedSubjects = localStorage.getItem("gradeflow_subjects");
       if (savedSubjects) { try { subjectsData = JSON.parse(savedSubjects); } catch (e) {} }
@@ -1094,7 +1278,6 @@
       const isDark = document.body.classList.contains("dark-mode");
       const accent = (appSettings && typeof appSettings.accentColor === "string") ? appSettings.accentColor.toLowerCase() : "#ffffff";
       const hasAccent = accent !== "#ffffff" && !!hexToRgb(accent);
-      // Leistenfarbe: Akzentfarbe (abgedunkelt/aufgehellt) in den Hintergrund gemischt
       const mix = isDark ? 0.38 : 0.30;
       const topBase = isDark ? "#07080c" : "#e2e6ee";
       const botBase = isDark ? "#101218" : "#ccd2dd";
@@ -1134,25 +1317,78 @@
       about: {
         title: "✨ Wer diese Website gemacht hat",
         content: `
-          <p><strong>Platzhalter – Text kommt später von dir.</strong></p>
-          <p>Hier kannst du erzählen, wer Notio entwickelt hat, warum du es gebaut hast und was dich dazu motiviert hat.</p>
-          <p>Vielleicht mit Name, Klasse, Schule oder einem kleinen Gruß an die Nutzer.</p>
+          <p><strong>Hi, ich bin Filip! 👋</strong></p>
+          <p>Ich habe Notio gebaut, weil mich die meisten Schul-Apps einfach genervt haben: überall Werbung, wichtige Funktionen nur gegen Bezahlung und ständig Pop-ups, die einem den Spaß nehmen. Ein Notenmanager sollte einfach funktionieren, ohne dass man erst ein Abo abschließen oder Anzeigen wegklicken muss.</p>
+          <p>Mir waren dabei die Details wichtig und dass du alles so einstellen kannst, wie es zu dir passt: Farben, Muster, Widgets und vieles mehr. Deine Noten sollen sich nach deiner App anfühlen, nicht nach einer Standardlösung.</p>
+          <p>Ich hoffe, Notio hilft dir, den Überblick über Noten, Klausuren und Hausaufgaben zu behalten. Viel Erfolg in der Schule und danke, dass du Notio nutzt!</p>
+          <p>Liebe Grüße,<br><strong>Filip</strong></p>
         `
       },
+
       privacy: {
         title: "🔒 Datenschutz",
         content: `
-          <p><strong>Platzhalter – Text kommt später von dir.</strong></p>
-          <p>Hier erklärst du, dass alle Daten ausschließlich lokal im Browser gespeichert werden (localStorage) und keine Daten an Server gesendet werden.</p>
-          <p>Du kannst hier auch erwähnen, dass keine Cookies verwendet werden und keine persönlichen Daten das Gerät verlassen.</p>
+          <p><strong>Kurz gesagt: Deine Daten gehören dir. Und nur dir. 🔐</strong></p>
+
+          <p>Notio speichert <strong>alles ausschließlich lokal auf deinem Gerät</strong> – also direkt in deinem Browser. Deine Noten, Fächer, Klausuren, Hausaufgaben und Einstellungen werden nirgendwohin geschickt. Kein Server, keine Cloud, kein Account nötig.</p>
+
+          <p><strong>Was das konkret bedeutet:</strong></p>
+          <p>
+            ✅ <strong>Kein Tracking.</strong> Wir zählen nicht, wer wann welche Seite öffnet.<br>
+            ✅ <strong>Keine Werbung.</strong> Niemand liest mit, um dir etwas zu verkaufen.<br>
+            ✅ <strong>Keine Cookies.</strong> Nur technisch notwendige Speicherung direkt im Browser.<br>
+            ✅ <strong>Kein Login.</strong> Kein Name, keine E-Mail, kein Passwort – nichts, was auf dich zurückfällt.<br>
+            ✅ <strong>Kein Internet nötig.</strong> Einmal geöffnet, funktioniert Notio auch offline.<br>
+            ✅ <strong>Keine Weitergabe.</strong> Es gibt keine Daten, die man weitergeben könnte.
+          </p>
+
+          <p><strong>Für Eltern und Lehrkräfte:</strong> Notio ist eine reine Web-App ohne Backend. Es werden keine personenbezogenen Daten erhoben, verarbeitet oder gespeichert – die App nutzt lediglich den <em>localStorage</em> des Browsers, um Eingaben zwischen Besuchen zu behalten. Es findet keine Kommunikation mit externen Servern statt, und es werden keine Analyse- oder Marketing-Tools eingesetzt.</p>
+
+          <p><strong>Ein Tipp:</strong> Wenn du dein Gerät, den Browser oder die App-Daten löschst, sind auch deine Noten weg. Deshalb kannst du über <em>Einstellungen → Teilen & Export → Backup erstellen</em> jederzeit eine Sicherungsdatei anlegen und sie z. B. in deiner Cloud oder auf einem USB-Stick speichern.</p>
+
+          <p>Deine Noten. Dein Gerät. Deine Kontrolle. 💙</p>
         `
       },
+
       howto: {
         title: "💡 Wie Notio funktioniert",
         content: `
-          <p><strong>Platzhalter – Text kommt später von dir.</strong></p>
-          <p>Hier kannst du eine kleine Anleitung geben: Wie trägt man Noten ein, was bedeuten die Fächer-Ordner, wie funktioniert der Stundenplan und die Hausaufgaben.</p>
-          <p>Vielleicht mit ein paar kurzen Tipps und Tricks für neue Nutzer.</p>
+          <p><strong>Willkommen bei Notio! 👋 Hier ist alles, was du wissen musst – in unter 2 Minuten.</strong></p>
+
+          <p><strong>📝 Noten eintragen (der schnellste Weg)</strong><br>
+          Nutze das Eingabefeld oben: Tippe z. B. <em>„Mathe, 2"</em> oder <em>„Deutsch Test 1,5"</em> ein und drücke Enter. Notio erkennt Fach, Note und Art (Klausur oder Test) automatisch. Falls das Fach noch nicht existiert, wirst du gefragt, ob es angelegt werden soll.</p>
+
+          <p><strong>📂 Fächer-Ordner</strong><br>
+          Jedes Fach ist ein eigener Ordner. Tippe drauf, um alle Noten zu sehen – getrennt nach Klausuren und Tests. Dort kannst du auch:</p>
+          <p>
+            • Neue Noten manuell hinzufügen oder bearbeiten<br>
+            • Die <strong>Gewichtung</strong> anpassen (Standard: 60 % Klausuren, 40 % Tests)<br>
+            • Den <strong>Was-wäre-wenn-Rechner</strong> nutzen: Schieb den Regler auf deine Wunsch-Note und Notio sagt dir, welche Note du als Nächstes schreiben musst.<br>
+            • Name, Icon und Farbe des Fachs ändern
+          </p>
+
+          <p><strong>📊 Haupt-Widget</strong><br>
+          Ganz oben siehst du deine wichtigsten Infos. Wisch nach oben oder unten, um zwischen Slides zu wechseln: Gesamtdurchschnitt, nächste Klausur, Kalender und Hausaufgaben. In den Einstellungen kannst du unter <em>🎛️ Haupt-Widget</em> festlegen, welche Slides du willst und in welcher Reihenfolge – einfach auf den Namen tippen und die Position wählen.</p>
+
+          <p><strong>📚 Hausaufgaben</strong><br>
+          Trage offene Aufgaben mit Fach, Beschreibung und Fälligkeitsdatum ein. Sie erscheinen automatisch im Kalender und im Haupt-Widget. Erledigte Aufgaben kannst du per Klick abhaken.</p>
+
+          <p><strong>📅 Kalender & Klausuren</strong><br>
+          Tippe auf einen Tag im Kalender, um eine Klausur oder einen Termin einzutragen. Über den Kalender-Slide im Widget gelangst du direkt zur Monatsansicht. Dort siehst du auch alle Hausaufgaben mit farbigen Punkten (nach Fach sortiert).</p>
+
+          <p><strong>🗓️ Stundenplan</strong><br>
+          Trage deine Fächer pro Wochentag mit Uhrzeit ein. Notio zeigt dir automatisch <strong>heute und morgen</strong> – praktisch für den schnellen Blick morgens. Über den „Bearbeiten"-Modus kannst du Stunden hinzufügen, ändern und die Farbe pro Fach festlegen.</p>
+
+          <p><strong>🎨 Design anpassen</strong><br>
+          Unter <em>🎨 Optik & Design</em> kannst du Dark/Light Mode umschalten, die Akzentfarbe wählen (wirkt auf Glow, Kalender und Druck), die Musterform im Hintergrund ändern und die Glow-Intensität regulieren.</p>
+
+          <p><strong>🖨️ Drucken & Teilen</strong><br>
+          Über <em>Teilen & Export → Druckvorschau</em> kannst du eine schöne A4-Seite mit deinen Noten erzeugen – mit wählbaren Inhalten (Gesamtschnitt, Fächer, Termine, Hausaufgaben) und in deiner Akzentfarbe. Ideal für Elternsprechtage oder zum Abheften.</p>
+
+          <p><strong>💾 Backup nicht vergessen!</strong><br>
+          Da alles nur auf deinem Gerät liegt, sichere deine Daten regelmäßig: <em>Teilen & Export → Backup erstellen</em>. Du kannst die Datei teilen (AirDrop, Dateien-App) oder direkt speichern. Wenn du das Backup später wieder einlesen willst, geht das genauso einfach.</p>
+
+          <p>Und jetzt: Viel Spaß beim Organisieren! 🚀</p>
         `
       }
     };
@@ -2277,6 +2513,7 @@
     function setGlowIntensity(val) {
       appSettings.glowIntensity = parseFloat(val);
       document.documentElement.style.setProperty("--glow-intensity", val);
+      applyAccentColor(appSettings.accentColor);
       scheduleRenderPattern();
       saveSettings();
     }
@@ -2337,9 +2574,16 @@
       document.documentElement.style.setProperty("--accent-color", n);
       document.documentElement.style.setProperty("--accent-rgb", `${rgb.r}, ${rgb.g}, ${rgb.b}`);
       document.documentElement.style.setProperty("--has-accent", "1");
-      document.documentElement.style.setProperty("--ambient-1", `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.16)`);
-      document.documentElement.style.setProperty("--ambient-2", `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.10)`);
-      document.documentElement.style.setProperty("--ambient-3", `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.06)`);
+
+      const t = (appSettings.glowIntensity || 0) / 0.02;
+      const curve = t * t * (3 - 2 * t);
+      const a1 = 0.02 + curve * 0.14;
+      const a2 = 0.01 + curve * 0.09;
+      const a3 = 0.005 + curve * 0.055;
+      document.documentElement.style.setProperty("--ambient-1", `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${a1})`);
+      document.documentElement.style.setProperty("--ambient-2", `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${a2})`);
+      document.documentElement.style.setProperty("--ambient-3", `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${a3})`);
+
       scheduleRenderPattern();
       updateThemeColorMeta();
     }
@@ -2367,11 +2611,33 @@
       const isDark = document.body.classList.contains("dark-mode");
       const hasAccent = getComputedStyle(document.documentElement).getPropertyValue("--has-accent").trim() === "1";
       let rgb = hasAccent ? (hexToRgb(appSettings.accentColor || "#ffffff") || { r: 255, g: 255, b: 255 }) : (isDark ? { r: 150, g: 165, b: 200 } : { r: 80, g: 100, b: 155 });
-      const alpha = (hasAccent ? (isDark ? 0.40 : 0.48) : (isDark ? 0.22 : 0.35)) * (0.8 + appSettings.glowIntensity * 12);
+      const t = appSettings.glowIntensity / 0.02;
+      const curve = t * t * (3 - 2 * t);
+      const alpha = (hasAccent ? (isDark ? 0.40 : 0.48) : (isDark ? 0.22 : 0.35)) * (0.10 + curve * 0.90);
       const size = 130;
       layer.style.backgroundSize = `${size}px ${size}px`;
-      layer.style.backgroundImage = buildShapePatternDataUri(appSettings.patternShape, rgb, alpha, size);
+      const key = [appSettings.patternShape, rgb.r, rgb.g, rgb.b, alpha.toFixed(3), size].join("|");
+      if (patternPngCache[key]) { layer.style.backgroundImage = patternPngCache[key]; return; }
+      const svgUrl = buildShapePatternDataUri(appSettings.patternShape, rgb, alpha, size);
+      layer.style.backgroundImage = svgUrl;
+      const token = ++patternBakeToken;
+      const img = new Image();
+      img.onload = () => {
+        if (token !== patternBakeToken) return;
+        try {
+          const scale = Math.min(window.devicePixelRatio || 1, 3);
+          const c = document.createElement("canvas");
+          c.width = c.height = Math.round(size * scale);
+          c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+          const png = `url("${c.toDataURL("image/png")}")`;
+          patternPngCache[key] = png;
+          layer.style.backgroundImage = png;
+        } catch (e) {}
+      };
+      img.src = svgUrl.slice(5, -2);
     }
+    let patternBakeToken = 0;
+    const patternPngCache = {};
 
     function buildShapePatternDataUri(shape, rgb, alpha, size) {
       const c = size / 2;
@@ -2379,10 +2645,16 @@
       const blurId = "soft-edge";
       const blurDef = `<filter id="${blurId}" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="${size * 0.045}"/></filter>`;
       let m = "";
-      if (shape === "square") m = `<rect x="${c - size * 0.17}" y="${c - size * 0.17}" width="${size * 0.34}" height="${size * 0.34}" rx="${size * 0.1}" fill="${fill}" filter="url(#${blurId})"/>`;
-      else if (shape === "triangle") m = `<polygon points="${c},${c - size * 0.30} ${c + size * 0.30},${c + size * 0.24} ${c - size * 0.30},${c + size * 0.24}" fill="${fill}" stroke="${fill}" stroke-width="${size * 0.05}" stroke-linejoin="round" filter="url(#${blurId})"/>`;
-      else if (shape === "heart") { const s = size * 0.18; m = `<path d="M ${c} ${c + s * 1.3} C ${c} ${c + s * 1.3} ${c - s * 2.0} ${c - s * 0.1} ${c - s * 2.0} ${c - s * 1.0} C ${c - s * 2.0} ${c - s * 1.8} ${c - s * 1.0} ${c - s * 2.0} ${c} ${c - s * 1.0} C ${c + s * 1.0} ${c - s * 2.0} ${c + s * 2.0} ${c - s * 1.8} ${c + s * 2.0} ${c - s * 1.0} C ${c + s * 2.0} ${c - s * 0.1} ${c} ${c + s * 1.3} ${c} ${c + s * 1.3} Z" fill="${fill}" filter="url(#${blurId})"/>`; }
-      else m = `<circle cx="${c}" cy="${c}" r="${size * 0.24}" fill="${fill}" filter="url(#${blurId})"/>`;
+      if (shape === "square") {
+        m = `<rect x="${c - size * 0.17}" y="${c - size * 0.17}" width="${size * 0.34}" height="${size * 0.34}" rx="${size * 0.1}" fill="${fill}" filter="url(#${blurId})"/>`;
+      } else if (shape === "triangle") {
+        m = `<polygon points="${c},${c - size * 0.30} ${c + size * 0.30},${c + size * 0.24} ${c - size * 0.30},${c + size * 0.24}" fill="${fill}" stroke="${fill}" stroke-width="${size * 0.05}" stroke-linejoin="round" filter="url(#${blurId})"/>`;
+      } else if (shape === "heart") {
+        const s = size * 0.18;
+        m = `<path d="M ${c} ${c + s * 1.3} C ${c} ${c + s * 1.3} ${c - s * 2.0} ${c - s * 0.1} ${c - s * 2.0} ${c - s * 1.0} C ${c - s * 2.0} ${c - s * 1.8} ${c - s * 1.0} ${c - s * 2.0} ${c} ${c - s * 1.0} C ${c + s * 1.0} ${c - s * 2.0} ${c + s * 2.0} ${c - s * 1.8} ${c + s * 2.0} ${c - s * 1.0} C ${c + s * 2.0} ${c - s * 0.1} ${c} ${c + s * 1.3} ${c} ${c + s * 1.3} Z" fill="${fill}" filter="url(#${blurId})"/>`;
+      } else {
+        m = `<circle cx="${c}" cy="${c}" r="${size * 0.24}" fill="${fill}" filter="url(#${blurId})"/>`;
+      }
       return `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="${size}px" height="${size}px"><defs>${blurDef}</defs>${m}</svg>`)}")`;
     }
 
@@ -2410,7 +2682,8 @@
     function handleQuickInput(e) { if (e.key === "Enter") submitQuickInput(); }
     function submitQuickInput() {
       const input = document.getElementById("quickInput");
-      const val = input.value.trim(); if (!val) return;
+      const val = input.value.trim();
+      if (!val) { showNotice("Noch nichts eingetragen", "Trage erst eine Note oder ein Fach ein.", "✏️"); return; }
       const lower = val.toLowerCase();
       const gradeMatch = val.match(/([0-9]+[.,]?[0-9]*)/);
       const foundSub = subjectsData.find(s => lower.includes(s.name.toLowerCase()));
@@ -2658,10 +2931,10 @@
       if (!date) { showGlassError(); return; }
       appSettings.examsList.push({
         subject: wizardSelectedSubject,
-       meta: date.getDate() + ". " + MONTH_NAMES_LONG[date.getMonth()] + " " + date.getFullYear(),
-        day: date.getDate.day(), month: date.getMonth() + 1, year: date.getFullYear()
+        meta: date.getDate() + ". " + MONTH_NAMES_LONG[date.getMonth()] + " " + date.getFullYear(),
+        day: date.getDate(), month: date.getMonth() + 1, year: date.getFullYear()
       });
-      appSettings.examsList.sort((a, b) => new Date(a.year, a.month - 1, a.day) - new Date(b.year, b.month));
+      appSettings.examsList.sort((a, b) => new Date(a.year, a.month - 1, a.day) - new Date(b.year, b.month - 1, b.day));
       saveSettings(); updateExamWidgetUI(); renderCalendarPreviewGrid();
       closeWizardDaysModal();
       currentCalendarDate = new Date(date.getFullYear(), date.getMonth(), 1);
@@ -2719,12 +2992,381 @@
       if (map[id]) map[id]();
     }
 
-    function shareDataViaAirDrop() {
-      const ds = JSON.stringify(appSettings, null, 2);
-      if (navigator.share) navigator.share({ title: 'Notio Backup', text: 'Meine Noten-Daten:', url: window.location.href }).catch(() => {});
-      else { navigator.clipboard.writeText(ds); alert("Daten in die Zwischenablage kopiert!"); }
+    function parseLocalDate(v) {
+      const m = String(v).match(/^(\d{4})-(\d{2})-(\d{2})/);
+      const d = m ? new Date(+m[1], +m[2] - 1, +m[3]) : new Date(v);
+      d.setHours(0, 0, 0, 0);
+      return d;
+    }
+
+    function getPrintAccent() {
+      const c = (appSettings.accentColor || "").toLowerCase();
+      if (!c || c === "#ffffff" || c === "#fff") return "#1d1d1f";
+      const rgb = hexToRgb(c);
+      if (!rgb) return "#1d1d1f";
+      const lum = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
+      if (lum > 0.85) return "#1d1d1f";
+      return c;
+    }
+
+    function getPrintAccentSoft(alpha) {
+      const c = getPrintAccent();
+      const rgb = hexToRgb(c) || { r: 29, g: 29, b: 31 };
+      return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
+    }
+
+    function openPrintOptionsModal() {
+      document.querySelectorAll("[data-print-opt]").forEach(el => {
+        const key = el.dataset.printOpt;
+        const on = appSettings.printOptions[key] !== false;
+        el.classList.toggle("active", on);
+      });
+      document.body.classList.add("modal-open");
+      document.getElementById("printOptionsModal").classList.add("open");
+    }
+
+    function closePrintOptionsModal() {
+      document.getElementById("printOptionsModal").classList.remove("open");
+      document.body.classList.add("modal-open");
+      buildPrintSheet();
+    }
+
+    function togglePrintOption(key) {
+      const cur = appSettings.printOptions[key] !== false;
+      appSettings.printOptions[key] = !cur;
+      saveSettings();
+      const el = document.querySelector(`[data-print-opt="${key}"]`);
+      if (el) el.classList.toggle("active", !cur);
+      buildPrintSheet();
+    }
+
+    function buildPrintSheet() {
+      const sheet = document.getElementById("printSheet");
+      if (!sheet) return;
+
+      const opts = appSettings.printOptions || { ...DEFAULT_PRINT_OPTIONS };
+      const accent = getPrintAccent();
+      sheet.style.setProperty("--ps-accent", accent);
+      sheet.style.setProperty("--ps-accent-soft", getPrintAccentSoft(0.10));
+
+      const de = n => n.toFixed(1).replace(".", ",");
+      const now = new Date();
+      const today = new Date(now); today.setHours(0, 0, 0, 0);
+      const name = (appSettings.userName || "").trim();
+
+      const avgs = subjectsData.map(x => getSubjectAverage(x)).filter(a => a !== null);
+      const total = avgs.length ? de(avgs.reduce((a, b) => a + b, 0) / avgs.length) : "—";
+      const gradeCount = subjectsData.reduce((n, x) => n + (x.klausuren ? x.klausuren.length : 0) + (x.tests ? x.tests.length : 0), 0);
+
+      let hasAny = false;
+
+      const headHtml = `
+        <div class="ps-head">
+          <div>
+            <div class="ps-brand">Notio</div>
+            <div class="ps-sub">Notenübersicht</div>
+          </div>
+          <div class="ps-meta">
+            ${name ? "<strong>" + escapeHTML(name) + "</strong><br>" : ""}
+            Stand: ${now.toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" })}
+          </div>
+        </div>`;
+
+      let totalHtml = "";
+      if (opts.avg !== false) {
+        hasAny = true;
+        const totalSub = avgs.length
+          ? "Ø aus " + avgs.length + (avgs.length === 1 ? " Fach" : " Fächern") + " · " + gradeCount + (gradeCount === 1 ? " Note" : " Noten") + " insgesamt"
+          : "Noch keine Noten eingetragen";
+        totalHtml = `
+          <div class="ps-total">
+            <div class="ps-total-label">Gesamtschnitt</div>
+            <div class="ps-total-value">${total}</div>
+            <div class="ps-total-sub">${totalSub}</div>
+          </div>`;
+      }
+
+      let subjectsHtml = "";
+      if (opts.subjects !== false) {
+        hasAny = true;
+        const gradeClass = g => {
+          const n = parseFloat(g);
+          if (isNaN(n)) return "";
+          if (n <= 2.5) return "ps-grade-good";
+          if (n <= 4.0) return "ps-grade-ok";
+          return "ps-grade-bad";
+        };
+        const renderGrades = arr => (arr && arr.length)
+          ? '<div class="ps-grade-list">' + arr.map(g =>
+              `<span class="ps-grade ${gradeClass(g)}">${escapeHTML(String(g).replace(".", ","))}</span>`
+            ).join("") + '</div>'
+          : '<span class="ps-none">—</span>';
+
+        const rows = subjectsData.map(sub => {
+          const avg = getSubjectAverage(sub);
+          const w = ((appSettings.weights && appSettings.weights[sub.name]) || "60-40").replace("-", " / ");
+          const color = getColorForSubject(sub.name);
+          return `<tr>
+            <td>
+              <span class="ps-dot" style="background:${escapeHTML(color)}"></span><strong>${escapeHTML(sub.emoji || "")} ${escapeHTML(sub.name)}</strong>
+              <span class="ps-small">Gewichtung ${escapeHTML(w)}</span>
+            </td>
+            <td>${renderGrades(sub.klausuren)}</td>
+            <td>${renderGrades(sub.tests)}</td>
+            <td class="ps-avg">${avg !== null ? de(avg) : '<span class="ps-none">—</span>'}</td>
+          </tr>`;
+        }).join("");
+
+        subjectsHtml = `
+          <div class="ps-section">
+            <h2 class="ps-section-title">Fächer & Noten</h2>
+            <table class="ps-table">
+              <thead>
+                <tr>
+                  <th>Fach</th>
+                  <th>Klausuren</th>
+                  <th>Tests</th>
+                  <th style="text-align:right;">Schnitt</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rows || '<tr><td colspan="4" class="ps-none">Noch keine Fächer angelegt.</td></tr>'}
+              </tbody>
+            </table>
+          </div>`;
+      }
+
+      let examsHtml = "";
+      if (opts.exams !== false) {
+        const upcoming = (appSettings.examsList || [])
+          .map(e => ({ date: new Date(e.year, e.month - 1, e.day), subject: e.subject }))
+          .filter(e => !isNaN(e.date) && e.date >= today)
+          .sort((a, b) => a.date - b.date);
+        if (upcoming.length > 0) hasAny = true;
+
+        const itemsHtml = upcoming.length
+          ? upcoming.map(e => {
+              const days = Math.round((e.date - today) / 86400000);
+              const rel = days === 0 ? "heute" : days === 1 ? "morgen" : "in " + days + " Tagen";
+              const dateStr = e.date.toLocaleDateString("de-DE", { weekday: "short", day: "2-digit", month: "2-digit", year: "numeric" });
+              return `<li>
+                <span class="ps-ev-date">${escapeHTML(dateStr)}</span>
+                <span class="ps-ev-title">${escapeHTML(e.subject)}</span>
+                <span class="ps-ev-rel">${rel}</span>
+              </li>`;
+            }).join("")
+          : '<li><span class="ps-none">Keine kommenden Termine eingetragen.</span></li>';
+
+        examsHtml = `
+          <div class="ps-events">
+            <h2 class="ps-section-title">Kommende Klausuren & Termine</h2>
+            <ul>${itemsHtml}</ul>
+          </div>`;
+      }
+
+      let homeworkHtml = "";
+      const showOpen = opts.homework !== false;
+      const showDone = opts.doneHw === true;
+      if (showOpen || showDone) {
+        const hwAll = appSettings.homework || [];
+        const open = hwAll.filter(h => !h.done).sort((a, b) => (a.dueDate || "").localeCompare(b.dueDate || ""));
+        const done = hwAll.filter(h => h.done);
+        const list = showOpen ? open : [];
+        const listDone = showDone ? done : [];
+        if (list.length > 0 || listDone.length > 0) hasAny = true;
+
+        const renderHwItem = h => {
+          const due = parseLocalDate(h.dueDate);
+          const dueStr = isNaN(due) ? "" : due.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" });
+          const color = getColorForSubject(h.subject);
+          return `<li>
+            <span class="ps-hw-dot" style="background:${escapeHTML(color)}"></span>
+            <span class="ps-hw-subject">${escapeHTML(h.subject)}</span>
+            <span class="ps-hw-desc">${escapeHTML(h.description || "—")}</span>
+            <span class="ps-hw-due">${escapeHTML(dueStr)}</span>
+          </li>`;
+        };
+
+        const openHtml = list.length
+          ? '<ul class="ps-hw-list">' + list.map(renderHwItem).join("") + '</ul>'
+          : '<div class="ps-none" style="font-size:0.9em; padding:4px 0;">Keine offenen Hausaufgaben 🎉</div>';
+        const doneHtml = listDone.length
+          ? '<ul class="ps-hw-list ps-hw-list-done">' + listDone.map(renderHwItem).join("") + '</ul>'
+          : '';
+
+        homeworkHtml = `
+          <div class="ps-section">
+            ${showOpen ? `<h2 class="ps-section-title">Offene Hausaufgaben</h2>${openHtml}` : ""}
+            ${showDone && listDone.length ? `<h2 class="ps-section-title" style="margin-top:16px;">Erledigte Hausaufgaben</h2>${doneHtml}` : ""}
+          </div>`;
+      }
+
+      const body = hasAny
+        ? totalHtml + subjectsHtml + examsHtml + homeworkHtml
+        : `<div class="ps-empty">
+             <div style="font-size:2.6em; margin-bottom:10px;">🖨️</div>
+             <strong>Nichts ausgewählt</strong>
+             <div style="margin-top:6px;">Aktiviere in den Optionen, was gedruckt werden soll.</div>
+           </div>`;
+
+      sheet.innerHTML = headHtml + body + `<div class="ps-foot">Erstellt mit Notio · ${now.toLocaleDateString("de-DE")}</div>`;
+    }
+
+    function openPrintPreview() {
+      buildPrintSheet();
+      const sc = document.getElementById("printPreview").querySelector(".print-scroll");
+      if (sc) sc.scrollTop = 0;
+      document.body.classList.add("modal-open");
+      document.getElementById("printPreview").classList.add("open");
+    }
+    function closePrintPreview() {
+      document.getElementById("printPreview").classList.remove("open");
+      checkModalState();
+    }
+    window.addEventListener("beforeprint", buildPrintSheet);
+
+    function showNotice(title, text, icon) {
+      document.getElementById("noticeIcon").textContent = icon || "ℹ️";
+      document.getElementById("noticeTitle").textContent = title;
+      document.getElementById("noticeText").textContent = text;
+      document.body.classList.add("modal-open");
+      document.getElementById("noticeModal").classList.add("open");
+    }
+    function closeNoticeModal() {
+      document.getElementById("noticeModal").classList.remove("open");
+      checkModalState();
+    }
+
+    function buildBackup() {
+      return { app: "Notio", version: 1, exportedAt: new Date().toISOString(), settings: appSettings, subjects: subjectsData };
+    }
+
+    function downloadBackupFile(json, fileName) {
+      const blob = new Blob([json], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = fileName;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+    }
+
+    function openBackupModal() {
+      const subs = subjectsData.length;
+      const grades = subjectsData.reduce((n, x) => n + (x.klausuren ? x.klausuren.length : 0) + (x.tests ? x.tests.length : 0), 0);
+      document.getElementById("backupModalText").textContent =
+        "Gesichert werden " + subs + (subs === 1 ? " Fach" : " Fächer") + " mit " + grades + (grades === 1 ? " Note" : " Noten") +
+        " sowie alle Einstellungen, Stundenplan, Klausuren und Hausaufgaben.";
+      document.getElementById("backupShareBtn").style.display = navigator.share ? "" : "none";
+      document.body.classList.add("modal-open");
+      document.getElementById("backupModal").classList.add("open");
+    }
+    function closeBackupModal() {
+      document.getElementById("backupModal").classList.remove("open");
+      checkModalState();
+    }
+    function backupFileName() { return "notio-backup-" + new Date().toISOString().slice(0, 10) + ".json"; }
+
+    async function backupShare() {
+      const json = JSON.stringify(buildBackup(), null, 2);
+      const fileName = backupFileName();
+
+      // Modal bleibt offen! Es liegt nur unter dem AirDrop-Menü.
+      // Nach erfolgreichem Teilen oder Abbruch sind wir automatisch wieder hier.
+      const modal = document.getElementById("backupModal");
+      if (!modal.classList.contains("open")) {
+        document.body.classList.add("modal-open");
+        modal.classList.add("open");
+      }
+
+      for (const type of ["application/json", "text/plain"]) {
+        try {
+          const file = new File([json], fileName, { type });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({ files: [file], title: "Notio Backup" });
+            // Nur wenn das Teilen wirklich erfolgreich war, schließen wir das Modal
+            setTimeout(() => { closeBackupModal(); }, 150);
+            return;
+          }
+        } catch (e) {
+          if (e && e.name === "AbortError") {
+            // Nutzer hat abgebrochen → Modal bleibt offen, nichts weiter tun.
+            return;
+          }
+        }
+      }
+
+      showNotice("Teilen nicht möglich", "Dieser Browser kann die Datei nicht teilen. Nutze bitte „Als Datei speichern“.", "ℹ️");
+    }
+
+    function backupSaveFile() {
+      downloadBackupFile(JSON.stringify(buildBackup(), null, 2), backupFileName());
+      closeBackupModal();
+    }
+
+    let pendingImport = null;
+
+    function parseBackup(obj) {
+      const isObj = v => v && typeof v === "object" && !Array.isArray(v);
+      if (!isObj(obj)) return null;
+      if (isObj(obj.settings)) {
+        let subs = null;
+        if (obj.subjects !== undefined && obj.subjects !== null) {
+          if (!Array.isArray(obj.subjects) || !obj.subjects.every(x => isObj(x) && typeof x.name === "string")) return null;
+          subs = obj.subjects;
+        }
+        return { settings: obj.settings, subjects: subs, exportedAt: obj.exportedAt || null };
+      }
+      if ("theme" in obj || "accentColor" in obj || "examsList" in obj || "timetable" in obj || "homework" in obj) {
+        return { settings: obj, subjects: null, exportedAt: null };
+      }
+      return null;
+    }
+
+    function handleBackupFile(input) {
+      const file = input.files && input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        input.value = "";
+        let data = null;
+        try { data = parseBackup(JSON.parse(reader.result)); } catch (e) {}
+        if (!data) { showNotice("Backup nicht lesbar", "Diese Datei ist kein gültiges Notio-Backup.", "⚠️"); return; }
+        pendingImport = data;
+        const lines = [];
+        if (data.exportedAt) {
+          const d = new Date(data.exportedAt);
+          if (!isNaN(d)) lines.push("Erstellt am " + d.toLocaleDateString("de-DE") + ".");
+        }
+        lines.push(data.subjects
+          ? "Enthalten: " + data.subjects.length + (data.subjects.length === 1 ? " Fach" : " Fächer") + " inkl. Noten sowie alle Einstellungen."
+          : "Enthalten: nur Einstellungen. Deine Fächer und Noten bleiben unverändert.");
+        lines.push("Deine aktuellen Daten auf diesem Gerät werden ersetzt.");
+        document.getElementById("importConfirmText").textContent = lines.join(" ");
+        document.body.classList.add("modal-open");
+        document.getElementById("importConfirmModal").classList.add("open");
+      };
+      reader.onerror = () => { input.value = ""; showNotice("Backup nicht lesbar", "Die Datei konnte nicht gelesen werden.", "⚠️"); };
+      reader.readAsText(file);
+    }
+
+    function closeImportConfirmModal() {
+      document.getElementById("importConfirmModal").classList.remove("open");
+      pendingImport = null;
+      checkModalState();
+    }
+
+    function confirmImportBackup() {
+      if (!pendingImport) { closeImportConfirmModal(); return; }
+      try {
+        localStorage.setItem("gradeflow_settings", JSON.stringify(pendingImport.settings));
+        if (pendingImport.subjects) localStorage.setItem("gradeflow_subjects", JSON.stringify(pendingImport.subjects));
+        localStorage.setItem("gradeflow_initialized", "true");
+        location.reload();
+      } catch (e) {
+        closeImportConfirmModal();
+        showNotice("Import fehlgeschlagen", "Die Daten konnten nicht gespeichert werden.", "⚠️");
+      }
     }
   </script>
 </body>
 </html>
-
