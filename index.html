@@ -98,6 +98,11 @@
 
     .pattern-layer { position: fixed; top: calc(-300px - env(safe-area-inset-top)); left: -300px; right: -300px; bottom: calc(-300px - env(safe-area-inset-bottom)); background-repeat: repeat; background-size: 130px 130px; opacity: calc(0.85 + var(--glow-intensity) * 8); pointer-events: none; z-index: 0; transform: translateZ(0); -webkit-mask-image: radial-gradient(ellipse 90% 90% at center, black 45%, transparent 95%); mask-image: radial-gradient(ellipse 90% 90% at center, black 45%, transparent 95%); will-change: opacity; transition: opacity 0.6s ease; }
 
+    /* Farb-Streifen fuer iOS 26 Safari: Safari liest hier die Farbe fuer Status- und Tab-Leiste */
+    .edge-tint { position: fixed; left: 0; width: 100%; height: 6px; z-index: 2000; pointer-events: none; }
+    #edgeTintTop { top: 0; background-color: #07080c; }
+    #edgeTintBottom { bottom: 0; background-color: #101218; }
+
     .app-container { width: 100%; max-width: 440px; position: relative; z-index: 1; transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
     body.modal-open .app-container > *:not(.modal-overlay) { opacity: 0; pointer-events: none; transform: scale(0.98); transition: opacity 0.3s ease, transform 0.3s ease; }
 
@@ -397,7 +402,7 @@
       body * { visibility: hidden; }
       .app-container, .app-container * { visibility: visible; }
       .app-container { position: absolute; left: 0; top: 0; padding: 0; }
-      .pattern-layer, body::before, body::after,
+      .pattern-layer, .edge-tint, body::before, body::after,
       .quick-input-bar, .header-actions, .icon-btn,
       .tt-expand-btn, .modal-overlay, .widget-pos-overlay, .footer-buttons, .info-overlay { display: none !important; }
       body { background: white !important; padding: 20px; }
@@ -408,6 +413,8 @@
   </style>
 </head>
 <body onload="initApp()">
+  <div class="edge-tint" id="edgeTintTop" aria-hidden="true"></div>
+  <div class="edge-tint" id="edgeTintBottom" aria-hidden="true"></div>
   <div class="pattern-layer" id="patternLayer"></div>
   <div class="app-container">
 
@@ -1076,14 +1083,33 @@
       if (wrapper) wrapper.addEventListener("click", handleTimetableClick);
     }
 
+    function mixHex(baseHex, accentHex, t) {
+      const b = hexToRgb(baseHex), a = hexToRgb(accentHex);
+      if (!b || !a) return baseHex;
+      const c = k => Math.round(b[k] + (a[k] - b[k]) * t).toString(16).padStart(2, "0");
+      return "#" + c("r") + c("g") + c("b");
+    }
+
     function updateThemeColorMeta() {
       const isDark = document.body.classList.contains("dark-mode");
+      const accent = (appSettings && typeof appSettings.accentColor === "string") ? appSettings.accentColor.toLowerCase() : "#ffffff";
+      const hasAccent = accent !== "#ffffff" && !!hexToRgb(accent);
+      // Leistenfarbe: Akzentfarbe (abgedunkelt/aufgehellt) in den Hintergrund gemischt
+      const mix = isDark ? 0.38 : 0.30;
+      const topBase = isDark ? "#07080c" : "#e2e6ee";
+      const botBase = isDark ? "#101218" : "#ccd2dd";
+      const topColor = hasAccent ? mixHex(topBase, accent, mix) : topBase;
+      const botColor = hasAccent ? mixHex(botBase, accent, mix) : botBase;
       const bgColor = isDark ? "#101218" : "#e2e6ee";
       const meta = document.getElementById("themeColorMeta");
-      if (meta) meta.content = bgColor;
+      if (meta) meta.content = topColor;
       const metaLight = document.getElementById("themeColorMetaLight");
-      if (metaLight) metaLight.content = bgColor;
-      document.body.style.backgroundColor = bgColor;
+      if (metaLight) metaLight.content = topColor;
+      document.body.style.backgroundColor = hasAccent ? botColor : bgColor;
+      const edgeTop = document.getElementById("edgeTintTop");
+      const edgeBottom = document.getElementById("edgeTintBottom");
+      if (edgeTop) edgeTop.style.backgroundColor = topColor;
+      if (edgeBottom) edgeBottom.style.backgroundColor = botColor;
     }
 
     function handleTimetableClick(e) {
@@ -2315,6 +2341,7 @@
       document.documentElement.style.setProperty("--ambient-2", `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.10)`);
       document.documentElement.style.setProperty("--ambient-3", `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.06)`);
       scheduleRenderPattern();
+      updateThemeColorMeta();
     }
 
     function hexToRgb(hex) {
@@ -2700,5 +2727,4 @@
   </script>
 </body>
 </html>
-
 
