@@ -1445,7 +1445,7 @@
     /* ============================================================
        PWA
        ============================================================ */
-function buildNotioIconSVG({ withText = true, rounded = true } = {}) {
+function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
   const rx = rounded ? 112 : 0;
   // Inhalt so skalieren, dass er mittig und mit Rand im Icon sitzt
   const content = withText
