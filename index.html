@@ -1,6 +1,3 @@
-
-
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -8,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta id="themeColorMeta" name="theme-color" content="#07080c" media="(prefers-color-scheme: dark)">
   <meta id="themeColorMetaLight" name="theme-color" content="#e2e6ee" media="(prefers-color-scheme: light)">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Notio">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link id="manifestLink" rel="manifest" href="">
+  <link id="appleIcon" rel="apple-touch-icon" href="">
+  <link id="faviconLink" rel="icon" type="image/png" href="">
   <title>Notio – Dein Notenmanager</title>
   <style>
     @property --accent-color { syntax: '<color>'; inherits: true; initial-value: transparent; }
@@ -80,7 +84,7 @@
                   background-color 0.5s cubic-bezier(0.22, 1, 0.36, 1) !important;
     }
 
-  html { min-height: 100%; overscroll-behavior: none; overscroll-behavior-y: none; }
+    html { min-height: 100%; overscroll-behavior: none; overscroll-behavior-y: none; }
     body { overscroll-behavior: none; overscroll-behavior-y: none; }
 
     body {
@@ -239,13 +243,74 @@
     .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .section-title { font-weight: 750; font-size: 0.95rem; }
 
+    .subject-search-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--glass-border);
+      background: linear-gradient(135deg, var(--glass-sheen-a), var(--glass-sheen-b)), var(--glass-bg);
+      backdrop-filter: blur(35px) saturate(115%);
+      -webkit-backdrop-filter: blur(35px) saturate(115%);
+      color: var(--text-color);
+      font-size: 0.85rem;
+      box-shadow: var(--glass-shadow);
+      margin-bottom: 12px;
+      display: none;
+      transition: box-shadow 0.4s cubic-bezier(.16,1,.3,1), background-color 0.3s ease;
+    }
+    .subject-search-bar.visible { display: flex; }
+    .subject-search-bar:focus-within {
+      box-shadow: 0 0 0 2px var(--accent-color), var(--glass-shadow) !important;
+      background-color: color-mix(in srgb, var(--accent-color) 6%, var(--glass-bg)) !important;
+    }
+    .subject-search-bar input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      color: var(--text-color);
+      font-size: 0.85rem;
+      outline: none !important;
+      box-shadow: none !important;
+    }
+    .subject-search-bar input:focus,
+    .subject-search-bar input:focus-visible {
+      box-shadow: none !important;
+      background-color: transparent !important;
+    }
+    .subject-search-bar input::placeholder { color: var(--text-sub); }
+    .subject-search-bar .search-icon { font-size: 0.9rem; color: var(--text-sub); }
+
+    .subject-empty-card { padding: 28px 22px; margin-bottom: 10px; border-radius: 22px; background: linear-gradient(135deg, var(--glass-sheen-a), var(--glass-sheen-b)), var(--glass-bg); border: 1px dashed var(--glass-border); text-align: center; cursor: pointer; transition: transform 0.3s cubic-bezier(.16,1,.3,1); }
+    .subject-empty-card:hover { transform: translateY(-2px); }
+    .subject-empty-card .sec-emoji { font-size: 2rem; margin-bottom: 8px; display: block; }
+    .subject-empty-card .sec-title { font-weight: 750; font-size: 1rem; margin-bottom: 4px; }
+    .subject-empty-card .sec-sub { font-size: 0.78rem; color: var(--text-sub); margin-bottom: 14px; line-height: 1.4; }
+
+    .subject-add-card { padding: 14px; margin-top: 4px; margin-bottom: 10px; border-radius: 22px; background: transparent; border: 1px dashed var(--glass-border); text-align: center; cursor: pointer; font-size: 0.85rem; font-weight: 700; color: var(--text-sub); transition: all 0.25s ease; }
+    .subject-add-card:hover { background: rgba(255,255,255,0.08); color: var(--text-color); border-color: var(--text-color); }
+
     .subject-card { display: flex; align-items: center; justify-content: space-between; padding: 16px; margin-bottom: 10px; border-radius: 22px; background: linear-gradient(135deg, var(--glass-sheen-a), var(--glass-sheen-b)), var(--glass-bg); border: 1px solid var(--glass-border); backdrop-filter: blur(38px) saturate(115%); -webkit-backdrop-filter: blur(38px) saturate(115%); box-shadow: var(--glass-shadow); position: relative; overflow: hidden; cursor: pointer; transition: transform 0.35s cubic-bezier(.16,1,.3,1); }
     .subject-card:hover { transform: translateY(-2px) scale(1.005); }
-    .subject-info { display: flex; align-items: center; gap: 14px; }
+    .subject-card.pulse { animation: cardPulse 0.55s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes cardPulse {
+      0%   { transform: scale(1); }
+      35%  { transform: scale(1.035); box-shadow: 0 20px 60px rgba(0,0,0,0.18), 0 0 0 2px var(--accent-color), inset 0 1px 0 var(--glass-highlight); }
+      100% { transform: scale(1); }
+    }
+    .subject-card .subject-color-dot { position: absolute; left: 0; top: 0; bottom: 0; width: 5px; border-radius: 22px 0 0 22px; }
+    .subject-info { display: flex; align-items: center; gap: 14px; padding-left: 8px; }
     .subject-emoji { width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 15px; background: linear-gradient(145deg, var(--glass-sheen-a), var(--glass-sheen-b)), var(--input-bg); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-highlight); font-size: 1.25rem; }
     .subject-name { font-size: 0.98rem; font-weight: 650; }
     .subject-meta { margin-top: 2px; font-size: 0.74rem; color: var(--text-sub); }
     .subject-grade-badge { font-size: 1.15rem; font-weight: 750; padding-right: 2px; }
+
+    .hw-filter-chips { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 2px; -webkit-overflow-scrolling: touch; }
+    .hw-chip { padding: 6px 12px; border-radius: 20px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-sub); font-size: 0.74rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 0.2s ease; }
+    .hw-chip:hover { background: rgba(255,255,255,0.15); }
+    .hw-chip.active { border-color: var(--accent-color); background: color-mix(in srgb, var(--accent-color) calc(var(--has-accent) * 25%), var(--input-bg)); color: var(--text-color); }
+    .hw-chip .chip-count { opacity: 0.6; margin-left: 4px; }
 
     .timetable-preview-vertical { padding: 18px; margin-bottom: 24px; border-radius: 22px; background: linear-gradient(135deg, var(--glass-sheen-a), var(--glass-sheen-b)), var(--glass-bg); border: 1px solid var(--glass-border); backdrop-filter: blur(38px) saturate(115%); -webkit-backdrop-filter: blur(38px) saturate(115%); box-shadow: var(--glass-shadow); cursor: pointer; transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1); position: relative; will-change: height; }
     .timetable-preview-vertical:hover { transform: translateY(-2px) scale(1.005); }
@@ -406,6 +471,37 @@
     .info-panel-content p { margin-bottom: 12px; }
     .info-panel-content strong { font-weight: 750; }
 
+    /* Statistik */
+    .stats-hero { padding: 22px 20px 20px; border-radius: 20px; background: linear-gradient(145deg, var(--glass-sheen-a), var(--glass-sheen-b)), var(--input-bg); border: 1px solid var(--glass-border); text-align: center; margin-bottom: 16px; position: relative; overflow: hidden; }
+    .stats-hero::after { content: ""; position: absolute; width: 300px; height: 200px; left: 50%; top: -100px; transform: translateX(-50%); background: radial-gradient(closest-side, color-mix(in srgb, var(--accent-color) 80%, transparent), transparent 70%); opacity: calc(var(--has-accent) * 0.35); pointer-events: none; }
+    .stats-hero-label { position: relative; z-index: 1; font-size: 0.7rem; font-weight: 800; letter-spacing: 1.6px; text-transform: uppercase; color: var(--text-sub); }
+    .stats-hero-value { position: relative; z-index: 1; font-size: 3.4rem; font-weight: 800; letter-spacing: -2px; margin: 6px 0 2px; background: linear-gradient(180deg, var(--text-color), color-mix(in srgb, var(--text-color) 70%, transparent)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .stats-hero-sub { position: relative; z-index: 1; font-size: 0.78rem; color: var(--text-sub); font-weight: 600; }
+    .stats-section { padding: 16px; border-radius: 18px; background: linear-gradient(135deg, var(--glass-sheen-a), var(--glass-sheen-b)), var(--glass-bg); border: 1px solid var(--glass-border); margin-bottom: 12px; }
+    .stats-section-title { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.1px; color: var(--text-sub); margin-bottom: 12px; }
+    .stats-highlights { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+    .stats-hl { padding: 14px 14px 12px; border-radius: 16px; background: linear-gradient(135deg, var(--glass-sheen-a), var(--glass-sheen-b)), var(--input-bg); border: 1px solid var(--glass-border); position: relative; overflow: hidden; }
+    .stats-hl-label { font-size: 0.62rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--text-sub); margin-bottom: 4px; }
+    .stats-hl-name { font-size: 0.88rem; font-weight: 750; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+    .stats-hl-value { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; }
+    .stats-hl-dot { position: absolute; top: 12px; right: 12px; width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 10px currentColor; }
+    .stats-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .stats-bar-row:last-child { margin-bottom: 0; }
+    .stats-bar-name { flex: 0 0 84px; font-size: 0.75rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .stats-bar-track { flex: 1; height: 12px; border-radius: 6px; background: var(--input-bg); position: relative; overflow: hidden; border: 1px solid var(--glass-border); }
+    .stats-bar-fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 6px; transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+    .stats-bar-value { flex: 0 0 34px; text-align: right; font-size: 0.78rem; font-weight: 800; letter-spacing: -0.3px; }
+    .stats-line-wrap { width: 100%; position: relative; }
+    .stats-line-svg { width: 100%; height: auto; display: block; }
+    .stats-line-empty { font-size: 0.78rem; color: var(--text-sub); font-style: italic; text-align: center; padding: 10px 0; }
+    .stats-month-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; align-items: end; height: 64px; margin-bottom: 4px; }
+    .stats-month-col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 4px; }
+    .stats-month-bar { width: 100%; border-radius: 3px 3px 0 0; background: var(--accent-color, #007aff); min-height: 3px; transition: height 0.5s cubic-bezier(0.16, 1, 0.3, 1); opacity: 0.85; }
+    .stats-month-count { font-size: 0.6rem; font-weight: 800; color: var(--text-sub); }
+    .stats-month-labels { display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; }
+    .stats-month-labels span { font-size: 0.55rem; font-weight: 700; text-align: center; color: var(--text-sub); text-transform: uppercase; }
+    .stats-empty { font-size: 0.82rem; color: var(--text-sub); font-style: italic; text-align: center; padding: 20px 0; line-height: 1.5; }
+
     @media (max-width: 480px) {
       body { padding: calc(20px + env(safe-area-inset-top)) 14px calc(20px + env(safe-area-inset-bottom)) 14px; }
       .app-container { max-width: 100%; }
@@ -423,7 +519,7 @@
     .pt-btn:hover { background: rgba(255,255,255,0.22); transform: translateY(-1px); }
     .pt-btn.primary { background: rgba(255,255,255,0.92); color: #111; border-color: transparent; }
     .pt-btn.primary:hover { background: #fff; }
-    .print-scroll { flex: 1; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding: 4px 14px calc(env(safe-area-inset-bottom) + 28px); }
+    .print-scroll { flex: 1; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding: 4px 14px calc(env(safe-area-inset-bottom) + 28px); display: flex; align-items: stretch; justify-content: center; }
 
     .print-sheet {
       --ps-accent: #1d1d1f;
@@ -432,6 +528,7 @@
       color: #1d1d1f;
       width: 100%;
       max-width: 794px;
+      min-height: 1080px;
       margin: 0 auto;
       padding: 44px 48px 34px;
       border-radius: 10px;
@@ -439,7 +536,15 @@
       line-height: 1.5;
       box-shadow: 0 24px 70px rgba(0,0,0,0.5);
       text-align: left;
+      display: flex;
+      flex-direction: column;
     }
+    .print-sheet > .ps-head,
+    .print-sheet > .ps-total,
+    .print-sheet > .ps-section,
+    .print-sheet > .ps-events,
+    .print-sheet > .ps-empty { flex-shrink: 0; }
+    .print-sheet > .ps-foot { margin-top: auto; }
     .print-sheet * { color: inherit; }
 
     .ps-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 14px; padding: 16px 0 14px; border-top: 5px solid var(--ps-accent); border-bottom: 1px solid #d8dbe2; margin-bottom: 26px; }
@@ -505,8 +610,9 @@
       body::before, body::after { display: none !important; }
       #printPreview { position: static !important; display: block !important; opacity: 1 !important; visibility: visible !important; background: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; padding: 0 !important; transition: none !important; }
       #printPreview .print-toolbar { display: none !important; }
-      #printPreview .print-scroll { overflow: visible !important; padding: 0 !important; }
-      .print-sheet { width: 100% !important; max-width: none !important; margin: 0 !important; padding: 0 !important; border-radius: 0 !important; box-shadow: none !important; font-size: 10.5pt; }
+      #printPreview .print-scroll { overflow: visible !important; padding: 0 !important; display: block !important; }
+      .print-sheet { width: 100% !important; max-width: none !important; margin: 0 !important; padding: 0 !important; border-radius: 0 !important; box-shadow: none !important; font-size: 10.5pt; min-height: 265mm !important; display: flex !important; flex-direction: column !important; }
+      .print-sheet > .ps-foot { margin-top: auto !important; }
     }
 
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
@@ -525,10 +631,6 @@
       </div>
 
       <div class="header-actions">
-        <button class="icon-btn" onclick="openSubjectModal()" aria-label="Fach hinzufügen">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        </button>
-
         <div style="position: relative;">
           <button class="icon-btn" onclick="toggleMenu()" aria-label="Einstellungen">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -606,6 +708,15 @@
               </div></div></div>
             </div>
 
+            <div class="menu-category" id="catStats">
+              <div class="menu-category-header" onclick="toggleCategory('catStats')">
+                <span>📊 Statistik</span><span class="menu-category-arrow">▼</span>
+              </div>
+              <div class="menu-category-content"><div class="menu-category-clip"><div class="menu-category-pad">
+                <div class="menu-section"><button class="menu-item" onclick="openStatsModal()">📊 Statistik anzeigen</button></div>
+              </div></div></div>
+            </div>
+
             <div class="menu-category" id="catShare">
               <div class="menu-category-header" onclick="toggleCategory('catShare')">
                 <span>📤 Teilen & Export</span><span class="menu-category-arrow">▼</span>
@@ -614,6 +725,7 @@
                 <div class="menu-section"><button class="menu-item" onclick="openBackupModal()">💾 Backup erstellen</button></div>
                 <div class="menu-section" style="margin-top: 4px;"><button class="menu-item" onclick="document.getElementById('backupFileInput').click()">📥 Backup einlesen</button><input type="file" id="backupFileInput" accept=".json,application/json,text/plain" style="display: none;" onchange="handleBackupFile(this)"></div>
                 <div class="menu-section" style="margin-top: 4px;"><button class="menu-item" onclick="openPrintPreview()">🖨️ Druckvorschau</button></div>
+                <div class="menu-section" style="margin-top: 4px;"><button class="menu-item" id="installBtn" onclick="showInstallHint()">📲 App installieren</button></div>
               </div></div></div>
             </div>
           </div>
@@ -636,6 +748,10 @@
     <div class="section-header">
       <span class="section-title">Fächer-Ordner</span>
     </div>
+    <div class="subject-search-bar" id="subjectSearchBar">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="subjectSearchInput" placeholder="Fach suchen..." oninput="renderSubjects()">
+    </div>
     <div id="subjectList"></div>
 
     <div class="section-header" style="margin-top: 24px;">
@@ -646,6 +762,7 @@
         <span class="homework-box-title">📚 Offene Aufgaben</span>
         <button class="homework-add-btn" onclick="openHomeworkModal()">+ Neu</button>
       </div>
+      <div class="hw-filter-chips" id="hwFilterChips"></div>
       <div class="homework-list" id="homeworkList"></div>
     </div>
 
@@ -693,6 +810,30 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="statsModal" onclick="handleModalBackdrop(event, 'statsModal')">
+    <div class="modal-card" onclick="event.stopPropagation()" style="max-width: 420px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-shrink: 0;">
+        <div class="modal-title" style="margin-bottom: 0;">📊 Statistik</div>
+        <button class="info-close-btn" onclick="closeStatsModal()">✕</button>
+      </div>
+      <div id="statsContent" style="overflow-y: auto; overscroll-behavior: contain; flex: 1; padding-right: 2px;"></div>
+      <div style="margin-top: 12px; flex-shrink: 0;">
+        <button class="btn-primary" style="width: 100%; padding: 11px;" onclick="closeStatsModal()">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="installHintModal" onclick="closeInstallHint()">
+    <div class="modal-card" onclick="event.stopPropagation()" style="max-width: 340px;">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+        <span style="font-size: 1.4rem;">📲</span>
+        <div class="modal-title" style="margin-bottom: 0;">Notio installieren</div>
+      </div>
+      <div id="installHintText" style="font-size: 0.84rem; color: var(--text-color); line-height: 1.55; margin-bottom: 14px;"></div>
+      <button class="btn-primary" style="width: 100%; padding: 11px;" onclick="closeInstallHint()">Verstanden</button>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="timetablePickerModal" onclick="handleModalBackground(event, 'timetablePickerModal')">
     <div class="modal-card" onclick="event.stopPropagation()" style="max-width: 340px;">
       <div class="modal-title">Stundenplan 📅</div>
@@ -734,15 +875,15 @@
         <div class="menu-label" style="margin-top: 10px;">Uhrzeit</div>
         <div style="display: flex; gap: 8px; align-items: center; justify-content: center;">
           <div class="time-picker-wrapper" style="flex:1;">
-            <div class="time-picker-col" id="colStartHour" onscroll="onPickerScroll('StartHour')"></div>
+            <div class="time-picker-col" id="colStartHour" onscroll="onPickerScroll('StartHour')" onpointerup="onPickerRelease('StartHour')"></div>
             <div class="time-picker-separator">:</div>
-            <div class="time-picker-col" id="colStartMin" onscroll="onPickerScroll('StartMin')"></div>
+            <div class="time-picker-col" id="colStartMin" onscroll="onPickerScroll('StartMin')" onpointerup="onPickerRelease('StartMin')"></div>
           </div>
           <span style="font-weight: 800; color: var(--text-sub);">bis</span>
           <div class="time-picker-wrapper" style="flex:1;">
-            <div class="time-picker-col" id="colEndHour" onscroll="onPickerScroll('EndHour')"></div>
+            <div class="time-picker-col" id="colEndHour" onscroll="onPickerScroll('EndHour')" onpointerup="onPickerRelease('EndHour')"></div>
             <div class="time-picker-separator">:</div>
-            <div class="time-picker-col" id="colEndMin" onscroll="onPickerScroll('EndMin')"></div>
+            <div class="time-picker-col" id="colEndMin" onscroll="onPickerScroll('EndMin')" onpointerup="onPickerRelease('EndMin')"></div>
           </div>
         </div>
         <div class="time-preview-badge" id="timePreviewBadge">Ausgewählt: 08:00 - 09:30</div>
@@ -1030,6 +1171,27 @@
           <div class="emoji-option active" onclick="selectEmoji('📚', this)">📚</div><div class="emoji-option" onclick="selectEmoji('📐', this)">📐</div><div class="emoji-option" onclick="selectEmoji('💻', this)">💻</div><div class="emoji-option" onclick="selectEmoji('🧠', this)">🧠</div><div class="emoji-option" onclick="selectEmoji('📊', this)">📊</div><div class="emoji-option" onclick="selectEmoji('🧪', this)">🧪</div><div class="emoji-option" onclick="selectEmoji('🎨', this)">🎨</div><div class="emoji-option" onclick="selectEmoji('⚽', this)">⚽</div><div class="emoji-option" onclick="selectEmoji('🎵', this)">🎵</div><div class="emoji-option" onclick="selectEmoji('⚛️', this)">⚛️</div><div class="emoji-option" onclick="selectEmoji('🌍', this)">🌍</div><div class="emoji-option" onclick="selectEmoji('🗺️', this)">🗺️</div><div class="emoji-option" onclick="selectEmoji('📜', this)">📜</div><div class="emoji-option" onclick="selectEmoji('🧬', this)">🧬</div><div class="emoji-option" onclick="selectEmoji('💡', this)">💡</div><div class="emoji-option" onclick="selectEmoji('🏀', this)">🏀</div><div class="emoji-option" onclick="selectEmoji('🎭', this)">🎭</div><div class="emoji-option" onclick="selectEmoji('✍️', this)">✍️</div>
         </div>
       </div>
+      <div style="margin-top: 10px;">
+        <div class="menu-label" style="margin-bottom: 4px;">🎨 Farbe für dieses Fach</div>
+        <div class="color-picker-grid-extended" id="subjectNewColorPicker">
+          <div class="color-dot active" style="background:#007aff" onclick="selectSubjectNewColor('#007aff', this)"></div>
+          <div class="color-dot" style="background:#5856d6" onclick="selectSubjectNewColor('#5856d6', this)"></div>
+          <div class="color-dot" style="background:#af52de" onclick="selectSubjectNewColor('#af52de', this)"></div>
+          <div class="color-dot" style="background:#ff2d55" onclick="selectSubjectNewColor('#ff2d55', this)"></div>
+          <div class="color-dot" style="background:#ff9500" onclick="selectSubjectNewColor('#ff9500', this)"></div>
+          <div class="color-dot" style="background:#ffcc00" onclick="selectSubjectNewColor('#ffcc00', this)"></div>
+          <div class="color-dot" style="background:#34c759" onclick="selectSubjectNewColor('#34c759', this)"></div>
+          <div class="color-dot" style="background:#30b0c7" onclick="selectSubjectNewColor('#30b0c7', this)"></div>
+          <div class="color-dot" style="background:#e06c75" onclick="selectSubjectNewColor('#e06c75', this)"></div>
+          <div class="color-dot" style="background:#98c379" onclick="selectSubjectNewColor('#98c379', this)"></div>
+          <div class="color-dot" style="background:#61afef" onclick="selectSubjectNewColor('#61afef', this)"></div>
+          <div class="color-dot" style="background:#c678dd" onclick="selectSubjectNewColor('#c678dd', this)"></div>
+          <div class="color-dot" style="background:#d19a66" onclick="selectSubjectNewColor('#d19a66', this)"></div>
+          <div class="color-dot" style="background:#56b6c2" onclick="selectSubjectNewColor('#56b6c2', this)"></div>
+          <div class="color-dot" style="background:#abb2bf" onclick="selectSubjectNewColor('#abb2bf', this)"></div>
+          <div class="color-dot" style="background:#0d9488" onclick="selectSubjectNewColor('#0d9488', this)"></div>
+        </div>
+      </div>
       <div class="modal-buttons" style="margin-top: 12px;"><button class="btn-cancel" onclick="closeSubjectModal()">Abbrechen</button><button class="btn-primary" style="flex:1" onclick="confirmAddSubject()">Hinzufügen</button></div>
     </div>
   </div>
@@ -1043,6 +1205,10 @@
         <div class="emoji-picker-grid" id="emojiEditPickerGrid">
           <div class="emoji-option" onclick="selectEditEmoji('📚', this)">📚</div><div class="emoji-option" onclick="selectEditEmoji('📐', this)">📐</div><div class="emoji-option" onclick="selectEditEmoji('💻', this)">💻</div><div class="emoji-option" onclick="selectEditEmoji('🧠', this)">🧠</div><div class="emoji-option" onclick="selectEditEmoji('📊', this)">📊</div><div class="emoji-option" onclick="selectEditEmoji('🧪', this)">🧪</div><div class="emoji-option" onclick="selectEditEmoji('🎨', this)">🎨</div><div class="emoji-option" onclick="selectEditEmoji('⚽', this)">⚽</div><div class="emoji-option" onclick="selectEditEmoji('🎵', this)">🎵</div><div class="emoji-option" onclick="selectEditEmoji('⚛️', this)">⚛️</div><div class="emoji-option" onclick="selectEditEmoji('🌍', this)">🌍</div><div class="emoji-option" onclick="selectEditEmoji('🗺️', this)">🗺️</div><div class="emoji-option" onclick="selectEditEmoji('📜', this)">📜</div><div class="emoji-option" onclick="selectEditEmoji('🧬', this)">🧬</div><div class="emoji-option" onclick="selectEditEmoji('💡', this)">💡</div><div class="emoji-option" onclick="selectEditEmoji('🏀', this)">🏀</div><div class="emoji-option" onclick="selectEditEmoji('🎭', this)">🎭</div><div class="emoji-option" onclick="selectEditEmoji('✍️', this)">✍️</div>
         </div>
+      </div>
+      <div style="margin-top: 10px;">
+        <div class="menu-label" style="margin-bottom: 4px;">🎨 Farbe</div>
+        <div class="color-picker-grid-extended" id="subjectEditColorPicker"></div>
       </div>
       <div class="modal-buttons" style="margin-top: 12px;"><button class="btn-cancel" onclick="closeSubjectEditModal()">Abbrechen</button><button class="btn-primary" style="flex:1" onclick="confirmEditSubject()">Speichern</button></div>
     </div>
@@ -1081,6 +1247,7 @@
         <div class="menu-category-content"><div class="menu-category-clip"><div class="menu-category-pad" style="padding: 0 12px;">
           <div style="display: flex; flex-direction: column; gap: 6px; padding-bottom: 8px; padding-top: 4px;">
             <button class="btn-cancel" style="width: 100%; padding: 10px; font-size: 0.78rem;" onclick="openWeightModal()">⚖️ Noten-Gewichtung</button>
+            <button class="btn-cancel" style="width: 100%; padding: 10px; font-size: 0.78rem;" onclick="shareSubject()">📤 Dieses Fach teilen</button>
             <div style="height: 1px; background: var(--glass-border); margin: 4px 0;"></div>
             <button class="btn-cancel" style="width: 100%; padding: 8px; font-size: 0.74rem;" onclick="openSubjectEditModal()">✏️ Name & Icon ändern</button>
             <button class="btn-cancel" style="width: 100%; padding: 8px; font-size: 0.74rem; color: #ff3b30; border-color: rgba(255,59,48,0.3);" onclick="promptDeleteSubject()">🗑️ Fach löschen</button>
@@ -1128,28 +1295,7 @@
         <div class="modal-title" style="margin-bottom: 0;">Was soll gedruckt werden?</div>
       </div>
       <div style="font-size: 0.78rem; color: var(--text-sub); margin-bottom: 14px;">Wähle die Inhalte für deinen Ausdruck aus.</div>
-      <div style="display: flex; flex-direction: column; gap: 8px;">
-        <div class="widget-toggle-item" data-print-opt="avg" onclick="togglePrintOption('avg')">
-          <div class="widget-toggle-label">📊 Gesamtschnitt</div>
-          <div class="widget-toggle-switch"></div>
-        </div>
-        <div class="widget-toggle-item" data-print-opt="subjects" onclick="togglePrintOption('subjects')">
-          <div class="widget-toggle-label">📚 Fächer & Noten</div>
-          <div class="widget-toggle-switch"></div>
-        </div>
-        <div class="widget-toggle-item" data-print-opt="exams" onclick="togglePrintOption('exams')">
-          <div class="widget-toggle-label">📌 Klausuren & Termine</div>
-          <div class="widget-toggle-switch"></div>
-        </div>
-        <div class="widget-toggle-item" data-print-opt="homework" onclick="togglePrintOption('homework')">
-          <div class="widget-toggle-label">📝 Offene Hausaufgaben</div>
-          <div class="widget-toggle-switch"></div>
-        </div>
-        <div class="widget-toggle-item" data-print-opt="doneHw" onclick="togglePrintOption('doneHw')">
-          <div class="widget-toggle-label">✅ Erledigte Hausaufgaben</div>
-          <div class="widget-toggle-switch"></div>
-        </div>
-      </div>
+      <div id="printOptionsContainer" style="display: flex; flex-direction: column; gap: 8px;"></div>
       <div class="modal-buttons" style="margin-top: 16px;">
         <button class="btn-primary" style="flex:1" onclick="closePrintOptionsModal()">Fertig</button>
       </div>
@@ -1159,7 +1305,7 @@
   <script>
 
     let appSettings = {
-      userName: "", theme: "auto", accentColor: "#ffffff", patternShape: "circle", patternSize: 130,
+      userName: "", theme: "auto", accentColor: "#ffffff", patternShape: "circle",
       glowIntensity: 0.005, examsList: [],
       timetable: { 1: [], 2: [], 3: [], 4: [], 5: [] },
       subjectColors: {},
@@ -1167,11 +1313,14 @@
       weights: {},
       slideEnabled: { avg: true, exam: true, cal: true, hw: true },
       slideOrder: ["avg", "exam", "cal", "hw"],
-      printOptions: { avg: true, subjects: true, exams: true, homework: true, doneHw: false }
+      printOptions: { avg: true, subjects: true, exams: true, homework: true, doneHw: false },
+      subjectPrintOptions: {}
     };
 
     let selectedEmoji = "📚"; let selectedEditEmoji = "📚";
-    let currentSlide = 0; let touchStartY = 0; let currentActiveSubjectName = "";
+    let selectedNewSubjectColor = "#007aff";
+    let selectedEditSubjectColor = "#007aff";
+    let currentSlide = 0; let currentActiveSubjectName = "";
     let pendingGrade = ""; let pendingCategory = "klausuren"; let pendingSubject = ""; let pendingUnknownSubjectName = "";
     let wizardSelectedSubject = "";
     let targetDeleteSub = ""; let targetDeleteCat = ""; let targetDeleteIdx = -1;
@@ -1185,11 +1334,16 @@
     let pendingHomeworkCreateSubject = null;
     let subjectsData = [];
     let currentPosWidgetId = null;
+    let activeHwFilter = "all";
+    let pulseSubjectName = null;
+    let deferredInstallPrompt = null;
 
     const FALLBACK_COLOR = "#007aff";
     const MONTH_NAMES_LONG = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+    const MONTH_NAMES_SHORT = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
     const DEFAULT_SLIDE_ORDER = ["avg", "exam", "cal", "hw"];
     const DEFAULT_PRINT_OPTIONS = { avg: true, subjects: true, exams: true, homework: true, doneHw: false };
+    const SUBJECT_COLOR_PALETTE = ["#007aff", "#5856d6", "#af52de", "#ff2d55", "#ff9500", "#ffcc00", "#34c759", "#30b0c7", "#e06c75", "#98c379", "#61afef", "#c678dd", "#d19a66", "#56b6c2", "#abb2bf", "#0d9488"];
 
     function initApp() {
       const saved = localStorage.getItem("gradeflow_settings");
@@ -1215,6 +1369,9 @@
           if (typeof appSettings.printOptions[k] !== "boolean") appSettings.printOptions[k] = DEFAULT_PRINT_OPTIONS[k];
         });
       }
+      if (!appSettings.subjectPrintOptions || typeof appSettings.subjectPrintOptions !== "object") {
+        appSettings.subjectPrintOptions = {};
+      }
 
       const savedSubjects = localStorage.getItem("gradeflow_subjects");
       if (savedSubjects) { try { subjectsData = JSON.parse(savedSubjects); } catch (e) {} }
@@ -1236,6 +1393,7 @@
         document.documentElement.style.setProperty("--glow-intensity", appSettings.glowIntensity);
       }
 
+      setupPWA();
       buildDatePickerOptions();
       updateExamWidgetUI();
       renderCalendarPreviewGrid();
@@ -1265,6 +1423,177 @@
 
       const wrapper = document.getElementById("timetablePreview");
       if (wrapper) wrapper.addEventListener("click", handleTimetableClick);
+
+      document.addEventListener("pointerdown", e => {
+        const menu = document.getElementById("glassMenu");
+        if (!menu.classList.contains("open")) return;
+        const toggleBtn = document.querySelector('button[onclick="toggleMenu()"]');
+        if (toggleBtn && toggleBtn.contains(e.target)) return;
+        if (menu.contains(e.target)) return;
+        if (e.target.closest("#widgetPosOverlay")) return;
+        if (e.target.closest(".modal-overlay")) return;
+        if (e.target.closest("#infoOverlay")) return;
+        closeGlassMenu();
+      }, true);
+
+      window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+      });
+    }
+
+    /* ============================================================
+       PWA
+       ============================================================ */
+    function buildNotioIconSVG() {
+      // Glas-Look-Icon mit N und Absolventenhut
+      return `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+        <defs>
+          <linearGradient id="bg" x1="0" y1="0" x2="0.6" y2="1">
+            <stop offset="0%" stop-color="#1a1f2c"/>
+            <stop offset="60%" stop-color="#11151d"/>
+            <stop offset="100%" stop-color="#0a0d13"/>
+          </linearGradient>
+          <radialGradient id="glow" cx="0.45" cy="0.35" r="0.65">
+            <stop offset="0%" stop-color="#2b4a7a" stop-opacity="0.85"/>
+            <stop offset="55%" stop-color="#1a2b48" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="#0a0d13" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="nFill" x1="0" y1="0" x2="0.3" y2="1">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="100%" stop-color="#c9d9f0"/>
+          </linearGradient>
+          <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+            <feOffset dx="0" dy="4"/>
+            <feComponentTransfer><feFuncA type="linear" slope="0.55"/></feComponentTransfer>
+            <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+        <rect width="512" height="512" rx="112" fill="url(#glow)"/>
+        <path d="M 168 372 C 168 372 168 190 168 172 C 168 152 190 148 202 162 L 250 235 L 300 172 C 308 162 322 156 330 170 L 358 226 C 366 242 358 254 344 250 L 322 244 C 316 242 312 246 308 252 L 288 288 L 342 364 C 350 376 344 380 334 380 L 302 380 C 292 380 288 376 282 366 L 250 316 L 218 366 C 212 376 208 380 198 380 L 168 380 Z" fill="url(#nFill)" filter="url(#shadow)"/>
+        <g filter="url(#shadow)">
+          <path d="M 320 128 L 372 108 L 424 128 L 372 148 Z" fill="#ffffff"/>
+          <path d="M 340 138 L 340 158 C 340 166 352 174 372 174 C 392 174 404 166 404 158 L 404 138 L 372 152 Z" fill="#ffffff" opacity="0.92"/>
+          <path d="M 424 128 L 424 158" stroke="#ffffff" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
+          <circle cx="424" cy="162" r="5" fill="#ffffff" opacity="0.85"/>
+        </g>
+      </svg>`;
+    }
+
+    async function renderIconToPng(size) {
+      const svg = buildNotioIconSVG();
+      const svgUrl = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          try {
+            const c = document.createElement("canvas");
+            c.width = size; c.height = size;
+            const ctx = c.getContext("2d");
+            ctx.drawImage(img, 0, 0, size, size);
+            resolve(c.toDataURL("image/png"));
+          } catch (e) { resolve(""); }
+        };
+        img.onerror = () => resolve("");
+        img.src = svgUrl;
+      });
+    }
+
+    async function setupPWA() {
+      // apple-touch-icon + favicon setzen
+      const png180 = await renderIconToPng(180);
+      const png192 = await renderIconToPng(192);
+      const png512 = await renderIconToPng(512);
+      const png32 = await renderIconToPng(32);
+      if (png180) document.getElementById("appleIcon").href = png180;
+      if (png32) document.getElementById("faviconLink").href = png32;
+
+      // Manifest dynamisch als Blob-URL
+      const manifest = {
+        name: "Notio – Notenmanager",
+        short_name: "Notio",
+        description: "Dein persönlicher Notenmanager – offline, lokal, ohne Tracking.",
+        start_url: ".",
+        display: "standalone",
+        background_color: "#0a0d13",
+        theme_color: "#101218",
+        orientation: "portrait",
+        icons: [
+          { src: png192, sizes: "192x192", type: "image/png", purpose: "any" },
+          { src: png512, sizes: "512x512", type: "image/png", purpose: "any" },
+          { src: png512, sizes: "512x512", type: "image/png", purpose: "maskable" }
+        ]
+      };
+      try {
+        const blob = new Blob([JSON.stringify(manifest)], { type: "application/manifest+json" });
+        document.getElementById("manifestLink").href = URL.createObjectURL(blob);
+      } catch (e) {}
+    }
+
+    function isStandalone() {
+      return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+    }
+
+    async function showInstallHint() {
+      // Wenn Chrome/Edge einen nativen Prompt anbietet → nutzen
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        try { await deferredInstallPrompt.userChoice; } catch (e) {}
+        deferredInstallPrompt = null;
+        return;
+      }
+
+      // Sonst Anleitung je nach Plattform
+      const ua = navigator.userAgent;
+      const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+      const isAndroid = /Android/.test(ua);
+
+      let html = "";
+      if (isStandalone()) {
+        html = "Du nutzt Notio bereits als installierte App. 💙";
+      } else if (isIOS) {
+        html = `So installierst du Notio auf dem iPhone/iPad:<br><br>
+          1. Tippe unten in Safari auf das <strong>Teilen-Symbol</strong> (□ mit Pfeil nach oben).<br>
+          2. Scrolle und wähle <strong>„Zum Home-Bildschirm"</strong>.<br>
+          3. Tippe oben rechts auf <strong>„Hinzufügen"</strong>.<br><br>
+          Danach erscheint Notio als Icon auf dem Homescreen und öffnet sich ohne Browser-Leiste.`;
+      } else if (isAndroid) {
+        html = `So installierst du Notio auf Android:<br><br>
+          1. Tippe oben rechts im Chrome auf das <strong>Drei-Punkte-Menü</strong>.<br>
+          2. Wähle <strong>„App installieren"</strong> oder <strong>„Zum Startbildschirm hinzufügen"</strong>.<br>
+          3. Bestätige mit <strong>„Installieren"</strong>.<br><br>
+          Danach erscheint Notio als Icon auf dem Homescreen.`;
+      } else {
+        html = `So installierst du Notio:<br><br>
+          Öffne diese Seite auf dem Handy in Safari (iPhone) oder Chrome (Android) und wähle im Browser-Menü <strong>„Zum Home-Bildschirm"</strong> bzw. <strong>„App installieren"</strong>.`;
+      }
+
+      document.getElementById("installHintText").innerHTML = html;
+      document.body.classList.add("modal-open");
+      document.getElementById("installHintModal").classList.add("open");
+    }
+
+    function closeInstallHint() {
+      document.getElementById("installHintModal").classList.remove("open");
+      checkModalState();
+    }
+
+    function closeGlassMenu() {
+      const menu = document.getElementById("glassMenu");
+      if (menu.classList.contains("open")) {
+        menu.classList.remove("open");
+        setTimeout(() => document.querySelectorAll(".menu-category").forEach(c => c.classList.remove("expanded")), 300);
+      }
+    }
+
+    function toggleMenu() {
+      const menu = document.getElementById("glassMenu");
+      menu.classList.toggle("open");
+      if (!menu.classList.contains("open")) {
+        setTimeout(() => document.querySelectorAll(".menu-category").forEach(c => c.classList.remove("expanded")), 300);
+      }
     }
 
     function mixHex(baseHex, accentHex, t) {
@@ -1324,14 +1653,11 @@
           <p>Liebe Grüße,<br><strong>Filip</strong></p>
         `
       },
-
       privacy: {
         title: "🔒 Datenschutz",
         content: `
           <p><strong>Kurz gesagt: Deine Daten gehören dir. Und nur dir. 🔐</strong></p>
-
           <p>Notio speichert <strong>alles ausschließlich lokal auf deinem Gerät</strong> – also direkt in deinem Browser. Deine Noten, Fächer, Klausuren, Hausaufgaben und Einstellungen werden nirgendwohin geschickt. Kein Server, keine Cloud, kein Account nötig.</p>
-
           <p><strong>Was das konkret bedeutet:</strong></p>
           <p>
             ✅ <strong>Kein Tracking.</strong> Wir zählen nicht, wer wann welche Seite öffnet.<br>
@@ -1341,53 +1667,33 @@
             ✅ <strong>Kein Internet nötig.</strong> Einmal geöffnet, funktioniert Notio auch offline.<br>
             ✅ <strong>Keine Weitergabe.</strong> Es gibt keine Daten, die man weitergeben könnte.
           </p>
-
           <p><strong>Für Eltern und Lehrkräfte:</strong> Notio ist eine reine Web-App ohne Backend. Es werden keine personenbezogenen Daten erhoben, verarbeitet oder gespeichert – die App nutzt lediglich den <em>localStorage</em> des Browsers, um Eingaben zwischen Besuchen zu behalten. Es findet keine Kommunikation mit externen Servern statt, und es werden keine Analyse- oder Marketing-Tools eingesetzt.</p>
-
           <p><strong>Ein Tipp:</strong> Wenn du dein Gerät, den Browser oder die App-Daten löschst, sind auch deine Noten weg. Deshalb kannst du über <em>Einstellungen → Teilen & Export → Backup erstellen</em> jederzeit eine Sicherungsdatei anlegen und sie z. B. in deiner Cloud oder auf einem USB-Stick speichern.</p>
-
           <p>Deine Noten. Dein Gerät. Deine Kontrolle. 💙</p>
         `
       },
-
       howto: {
         title: "💡 Wie Notio funktioniert",
         content: `
           <p><strong>Willkommen bei Notio! 👋 Hier ist alles, was du wissen musst – in unter 2 Minuten.</strong></p>
-
           <p><strong>📝 Noten eintragen (der schnellste Weg)</strong><br>
-          Nutze das Eingabefeld oben: Tippe z. B. <em>„Mathe, 2"</em> oder <em>„Deutsch Test 1,5"</em> ein und drücke Enter. Notio erkennt Fach, Note und Art (Klausur oder Test) automatisch. Falls das Fach noch nicht existiert, wirst du gefragt, ob es angelegt werden soll.</p>
-
+          Nutze das Eingabefeld oben: Tippe z. B. <em>„Mathe, 2"</em> oder <em>„Deutsch Test 1,5"</em> ein und drücke Enter. Notio erkennt Fach, Note und Art (Klausur oder Test) automatisch.</p>
           <p><strong>📂 Fächer-Ordner</strong><br>
-          Jedes Fach ist ein eigener Ordner. Tippe drauf, um alle Noten zu sehen – getrennt nach Klausuren und Tests. Dort kannst du auch:</p>
-          <p>
-            • Neue Noten manuell hinzufügen oder bearbeiten<br>
-            • Die <strong>Gewichtung</strong> anpassen (Standard: 60 % Klausuren, 40 % Tests)<br>
-            • Den <strong>Was-wäre-wenn-Rechner</strong> nutzen: Schieb den Regler auf deine Wunsch-Note und Notio sagt dir, welche Note du als Nächstes schreiben musst.<br>
-            • Name, Icon und Farbe des Fachs ändern
-          </p>
-
+          Jedes Fach ist ein eigener Ordner. Tippe drauf, um alle Noten zu sehen – getrennt nach Klausuren und Tests.</p>
           <p><strong>📊 Haupt-Widget</strong><br>
-          Ganz oben siehst du deine wichtigsten Infos. Wisch nach oben oder unten, um zwischen Slides zu wechseln: Gesamtdurchschnitt, nächste Klausur, Kalender und Hausaufgaben. In den Einstellungen kannst du unter <em>🎛️ Haupt-Widget</em> festlegen, welche Slides du willst und in welcher Reihenfolge – einfach auf den Namen tippen und die Position wählen.</p>
-
+          Ganz oben siehst du deine wichtigsten Infos. Wisch nach oben oder unten, um zwischen Slides zu wechseln.</p>
           <p><strong>📚 Hausaufgaben</strong><br>
-          Trage offene Aufgaben mit Fach, Beschreibung und Fälligkeitsdatum ein. Sie erscheinen automatisch im Kalender und im Haupt-Widget. Erledigte Aufgaben kannst du per Klick abhaken.</p>
-
-          <p><strong>📅 Kalender & Klausuren</strong><br>
-          Tippe auf einen Tag im Kalender, um eine Klausur oder einen Termin einzutragen. Über den Kalender-Slide im Widget gelangst du direkt zur Monatsansicht. Dort siehst du auch alle Hausaufgaben mit farbigen Punkten (nach Fach sortiert).</p>
-
+          Trage offene Aufgaben mit Fach, Beschreibung und Fälligkeitsdatum ein. Mit den Chips filterst du nach Heute, Woche oder Überfällig.</p>
           <p><strong>🗓️ Stundenplan</strong><br>
-          Trage deine Fächer pro Wochentag mit Uhrzeit ein. Notio zeigt dir automatisch <strong>heute und morgen</strong> – praktisch für den schnellen Blick morgens. Über den „Bearbeiten"-Modus kannst du Stunden hinzufügen, ändern und die Farbe pro Fach festlegen.</p>
-
+          Trage deine Fächer pro Wochentag mit Uhrzeit ein. Notio zeigt dir automatisch heute und morgen.</p>
+          <p><strong>📈 Statistik</strong><br>
+          Unter Einstellungen → Statistik siehst du deinen Notenverlauf, dein bestes und schlechtestes Fach und vieles mehr.</p>
           <p><strong>🎨 Design anpassen</strong><br>
-          Unter <em>🎨 Optik & Design</em> kannst du Dark/Light Mode umschalten, die Akzentfarbe wählen (wirkt auf Glow, Kalender und Druck), die Musterform im Hintergrund ändern und die Glow-Intensität regulieren.</p>
-
-          <p><strong>🖨️ Drucken & Teilen</strong><br>
-          Über <em>Teilen & Export → Druckvorschau</em> kannst du eine schöne A4-Seite mit deinen Noten erzeugen – mit wählbaren Inhalten (Gesamtschnitt, Fächer, Termine, Hausaufgaben) und in deiner Akzentfarbe. Ideal für Elternsprechtage oder zum Abheften.</p>
-
+          Unter <em>🎨 Optik & Design</em> kannst du Dark/Light Mode umschalten, die Akzentfarbe wählen und aus vier Mustern wählen.</p>
+          <p><strong>📲 App installieren</strong><br>
+          Über <em>Teilen & Export → App installieren</em> bekommst du eine Anleitung, wie du Notio auf dem Homescreen ablegst.</p>
           <p><strong>💾 Backup nicht vergessen!</strong><br>
-          Da alles nur auf deinem Gerät liegt, sichere deine Daten regelmäßig: <em>Teilen & Export → Backup erstellen</em>. Du kannst die Datei teilen (AirDrop, Dateien-App) oder direkt speichern. Wenn du das Backup später wieder einlesen willst, geht das genauso einfach.</p>
-
+          Da alles nur auf deinem Gerät liegt, sichere deine Daten regelmäßig.</p>
           <p>Und jetzt: Viel Spaß beim Organisieren! 🚀</p>
         `
       }
@@ -1426,6 +1732,7 @@
         (appSettings.timetable[day] || []).forEach(slot => { if (slot.subject === subjectName.trim()) slot.color = color; });
       }
       saveSettings();
+      refreshUI();
     }
 
     function getWeights(subjectName) {
@@ -1453,15 +1760,56 @@
       if (c) c.textContent = `${subjectsData.length} Fächer aktiv`;
     }
 
+    function refreshUI() {
+      renderSubjects();
+      renderTimetablePreview();
+      renderHomework();
+      renderCalendarPreviewGrid();
+      updateExamWidgetUI();
+      updateOverallAverage();
+      if (typeof applySlideOrder === "function") applySlideOrder(false);
+      if (currentActiveSubjectName && document.getElementById("subjectDetailModal").classList.contains("open")) {
+        openSubjectDetail(currentActiveSubjectName, true);
+      }
+    }
+
     function renderSubjects() {
-      const list = document.getElementById("subjectList"); list.innerHTML = "";
-      subjectsData.forEach(sub => {
+      const list = document.getElementById("subjectList"); if (!list) return;
+      list.innerHTML = "";
+
+      const searchBar = document.getElementById("subjectSearchBar");
+      const searchInput = document.getElementById("subjectSearchInput");
+      if (subjectsData.length >= 5) searchBar.classList.add("visible");
+      else searchBar.classList.remove("visible");
+
+      if (subjectsData.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "subject-empty-card";
+        empty.onclick = () => openSubjectModal();
+        empty.innerHTML = `
+          <span class="sec-emoji">📚</span>
+          <div class="sec-title">Noch keine Fächer</div>
+          <div class="sec-sub">Leg dein erstes Fach an, z. B. Mathematik, Deutsch oder Englisch.</div>
+          <div class="btn-primary" style="display: inline-block; padding: 9px 18px;">+ Erstes Fach anlegen</div>
+        `;
+        list.appendChild(empty);
+        updateOverallAverage();
+        return;
+      }
+
+      const query = (searchInput?.value || "").trim().toLowerCase();
+      const filtered = query ? subjectsData.filter(s => s.name.toLowerCase().includes(query)) : subjectsData;
+
+      filtered.forEach(sub => {
         const card = document.createElement("div");
         card.className = "subject-card";
+        if (pulseSubjectName && pulseSubjectName === sub.name) card.classList.add("pulse");
         card.dataset.subjectName = sub.name;
         card.addEventListener("click", () => openSubjectDetail(card.dataset.subjectName));
         const avg = getSubjectAverage(sub);
+        const color = getColorForSubject(sub.name);
         card.innerHTML = `
+          <div class="subject-color-dot" style="background: ${color}; box-shadow: 0 0 8px ${color}80;"></div>
           <div class="subject-info" style="pointer-events:none;">
             <div class="subject-emoji">${sub.emoji}</div>
             <div>
@@ -1469,9 +1817,27 @@
               <div class="subject-meta">${escapeHTML(sub.meta)}</div>
             </div>
           </div>
-          <div class="subject-grade-badge" style="pointer-events:none;">${avg !== null ? avg.toFixed(1) : "—"}</div>`;
+          <div class="subject-grade-badge" style="pointer-events:none; color: ${color};">${avg !== null ? avg.toFixed(1) : "—"}</div>`;
         list.appendChild(card);
       });
+
+      if (filtered.length === 0 && query) {
+        const hint = document.createElement("div");
+        hint.style.cssText = "text-align:center; font-size:0.8rem; color:var(--text-sub); padding: 20px 0;";
+        hint.textContent = "Kein Fach gefunden.";
+        list.appendChild(hint);
+      }
+
+      if (!query) {
+        const addCard = document.createElement("div");
+        addCard.className = "subject-add-card";
+        addCard.onclick = () => openSubjectModal();
+        addCard.textContent = "+ Weiteres Fach hinzufügen";
+        list.appendChild(addCard);
+      }
+
+      if (pulseSubjectName) setTimeout(() => { pulseSubjectName = null; }, 700);
+
       updateOverallAverage();
     }
 
@@ -1491,9 +1857,7 @@
           folder.classList.remove("expanded");
           void content.offsetHeight;
           content.style.transition = "";
-        } else {
-          folder.classList.remove("expanded");
-        }
+        } else folder.classList.remove("expanded");
       }
 
       const klC = document.getElementById("detailKlausurenList"); klC.innerHTML = "";
@@ -1541,7 +1905,7 @@
         const meta = document.getElementById("detailModalMeta");
         if (meta) meta.textContent = `Gesamtschnitt: ${avg !== null ? avg.toFixed(1) : "—"}`;
       }
-      renderSubjects();
+      refreshUI();
       calculateWhatIf(document.getElementById("whatIfSlider").value);
     }
 
@@ -1556,11 +1920,8 @@
 
     function closeWeightModal() {
       document.getElementById("weightModal").classList.remove("open");
-      if (currentActiveSubjectName) {
-        setTimeout(() => { openSubjectDetail(currentActiveSubjectName, true); }, 50);
-      } else {
-        checkModalState();
-      }
+      if (currentActiveSubjectName) setTimeout(() => { openSubjectDetail(currentActiveSubjectName, true); }, 50);
+      else checkModalState();
     }
 
     function closeSubjectDetail() { document.getElementById("subjectDetailModal").classList.remove("open"); checkModalState(); currentActiveSubjectName = ""; }
@@ -1588,19 +1949,13 @@
       for (let g = lower; g <= upper; g++) { validGrades.push(g); }
 
       let message;
-      if (validGrades.length === 0) {
-        message = `Mit einer weiteren Note wirst du die ${r} auf dem Zeugnis leider nicht mehr erreichen.`;
-      } else if (validGrades.length === 1) {
-        message = `Für eine ${r} auf dem Zeugnis brauchst du genau eine ${validGrades[0]}.`;
-      } else if (validGrades.length === 6) {
-        message = `Egal welche Note du schreibst, du behältst die ${r} auf dem Zeugnis.`;
-      } else {
+      if (validGrades.length === 0) message = `Mit einer weiteren Note wirst du die ${r} auf dem Zeugnis leider nicht mehr erreichen.`;
+      else if (validGrades.length === 1) message = `Für eine ${r} auf dem Zeugnis brauchst du genau eine ${validGrades[0]}.`;
+      else if (validGrades.length === 6) message = `Egal welche Note du schreibst, du behältst die ${r} auf dem Zeugnis.`;
+      else {
         let listText;
-        if (validGrades.length === 2) {
-          listText = `${validGrades[0]} oder ${validGrades[1]}`;
-        } else {
-          listText = validGrades.slice(0, -1).join(", ") + " oder " + validGrades[validGrades.length - 1];
-        }
+        if (validGrades.length === 2) listText = `${validGrades[0]} oder ${validGrades[1]}`;
+        else listText = validGrades.slice(0, -1).join(", ") + " oder " + validGrades[validGrades.length - 1];
         message = `Mit einer ${listText} bleibst du auf der ${r}.`;
       }
 
@@ -1822,6 +2177,26 @@
       requestAnimationFrame(() => { highlightSelectedPickerItem('col' + prefix); updateTimePreview(); scrollRafPending = false; });
     }
 
+    function onPickerRelease(prefix) {
+      const colId = 'col' + prefix;
+      const col = document.getElementById(colId);
+      if (!col) return;
+      setTimeout(() => {
+        const items = col.querySelectorAll('.time-picker-item');
+        const center = col.scrollTop + col.clientHeight / 2;
+        let closest = null, md = Infinity;
+        items.forEach(item => {
+          const diff = Math.abs(center - (item.offsetTop + item.clientHeight / 2));
+          if (diff < md) { md = diff; closest = item; }
+        });
+        if (closest) {
+          const target = closest.offsetTop - col.clientHeight / 2 + closest.clientHeight / 2;
+          col.scrollTo({ top: target, behavior: "smooth" });
+          setTimeout(() => { highlightSelectedPickerItem(colId); updateTimePreview(); }, 300);
+        }
+      }, 60);
+    }
+
     function highlightSelectedPickerItem(colId) {
       const col = document.getElementById(colId);
       const items = col.querySelectorAll('.time-picker-item');
@@ -1861,8 +2236,8 @@
       const newSlot = { subject: subj, time: `${sh}:${sm} - ${eh}:${em}`, color: currentTtColor };
       if (pendingTtIndex >= 0) appSettings.timetable[activeTimetableDay][pendingTtIndex] = newSlot;
       else appSettings.timetable[activeTimetableDay].push(newSlot);
-      setColorForSubject(subj, currentTtColor);
       saveSettings();
+      setColorForSubject(subj, currentTtColor);
       closeTtSlotPrompt();
     }
 
@@ -1878,11 +2253,15 @@
 
     function closeTtSlotDeleteConfirm() { document.getElementById("ttSlotDeleteConfirmModal").classList.remove("open"); document.getElementById("ttSlotPromptModal").classList.add("open"); pendingDeleteTtDay = null; pendingDeleteTtIdx = -1; }
     function executeDeleteTtSlot() {
-      if (pendingDeleteTtDay !== null && pendingDeleteTtIdx >= 0) { appSettings.timetable[pendingDeleteTtDay].splice(pendingDeleteTtIdx, 1); saveSettings(); }
+      if (pendingDeleteTtDay !== null && pendingDeleteTtIdx >= 0) {
+        appSettings.timetable[pendingDeleteTtDay].splice(pendingDeleteTtIdx, 1);
+        saveSettings();
+      }
       document.getElementById("ttSlotDeleteConfirmModal").classList.remove("open");
       pendingDeleteTtDay = null; pendingDeleteTtIdx = -1;
       document.getElementById("timetableDayModal").classList.add("open");
       renderDayModalContent();
+      renderTimetablePreview();
     }
 
     function getHomeworkStatus(hw) {
@@ -1896,12 +2275,59 @@
       return { text: `Noch ${diff} Tage`, color: "var(--text-sub)" };
     }
 
+    function renderHwFilterChips() {
+      const c = document.getElementById("hwFilterChips"); if (!c) return;
+      const hw = appSettings.homework || [];
+      const today = new Date(); today.setHours(0,0,0,0);
+      const weekEnd = new Date(today); weekEnd.setDate(today.getDate() + 7);
+
+      const openAll = hw.filter(h => !h.done).length;
+      const todayCount = hw.filter(h => !h.done && (new Date(h.dueDate).setHours(0,0,0,0) === today.getTime())).length;
+      const weekCount = hw.filter(h => { if (h.done) return false; const d = new Date(h.dueDate); d.setHours(0,0,0,0); return d >= today && d <= weekEnd; }).length;
+      const overdueCount = hw.filter(h => !h.done && new Date(h.dueDate).setHours(0,0,0,0) < today.getTime()).length;
+
+      const chips = [
+        { id: "all",     label: "Alle offen", count: openAll },
+        { id: "today",   label: "Heute",      count: todayCount },
+        { id: "week",    label: "Diese Woche", count: weekCount },
+        { id: "overdue", label: "Überfällig", count: overdueCount }
+      ];
+
+      c.innerHTML = "";
+      chips.forEach(ch => {
+        const el = document.createElement("div");
+        el.className = "hw-chip" + (activeHwFilter === ch.id ? " active" : "");
+        el.innerHTML = `${ch.label}<span class="chip-count">${ch.count}</span>`;
+        el.onclick = () => { activeHwFilter = ch.id; renderHwFilterChips(); renderHomework(); };
+        c.appendChild(el);
+      });
+    }
+
     function renderHomework() {
       const list = document.getElementById("homeworkList"); if (!list) return;
+      renderHwFilterChips();
       list.innerHTML = "";
-      const hw = appSettings.homework || [];
-      if (hw.length === 0) { list.innerHTML = `<div class="homework-empty">Keine Hausaufgaben 🎉</div>`; renderHomeworkWidgetSlide(); if (document.getElementById("calendarModal").classList.contains("open")) renderBigCalendar(); renderCalendarPreviewGrid(); return; }
-      const sorted = hw.slice().sort((a, b) => { if (a.done !== b.done) return a.done ? 1 : -1; return new Date(a.dueDate) - new Date(b.dueDate); });
+
+      const allHw = appSettings.homework || [];
+      const today = new Date(); today.setHours(0,0,0,0);
+      const weekEnd = new Date(today); weekEnd.setDate(today.getDate() + 7);
+
+      let filtered = allHw;
+      if (activeHwFilter === "today") filtered = allHw.filter(h => !h.done && new Date(h.dueDate).setHours(0,0,0,0) === today.getTime());
+      else if (activeHwFilter === "week") filtered = allHw.filter(h => { if (h.done) return false; const d = new Date(h.dueDate); d.setHours(0,0,0,0); return d >= today && d <= weekEnd; });
+      else if (activeHwFilter === "overdue") filtered = allHw.filter(h => !h.done && new Date(h.dueDate).setHours(0,0,0,0) < today.getTime());
+
+      if (filtered.length === 0) {
+        let emptyMsg = "Keine Hausaufgaben 🎉";
+        if (activeHwFilter === "today") emptyMsg = "Heute nichts fällig ✨";
+        if (activeHwFilter === "week") emptyMsg = "Diese Woche nichts fällig ✨";
+        if (activeHwFilter === "overdue") emptyMsg = "Nichts überfällig 👍";
+        list.innerHTML = `<div class="homework-empty">${emptyMsg}</div>`;
+        renderHomeworkWidgetSlide();
+        return;
+      }
+
+      const sorted = filtered.slice().sort((a, b) => { if (a.done !== b.done) return a.done ? 1 : -1; return new Date(a.dueDate) - new Date(b.dueDate); });
       sorted.forEach(h => {
         const status = getHomeworkStatus(h);
         const color = getColorForSubject(h.subject);
@@ -1924,8 +2350,6 @@
         list.appendChild(item);
       });
       renderHomeworkWidgetSlide();
-      if (document.getElementById("calendarModal").classList.contains("open")) renderBigCalendar();
-      renderCalendarPreviewGrid();
     }
 
     function toggleHomeworkDone(id) {
@@ -2059,6 +2483,7 @@
       }
       saveSettings();
       renderHomework();
+      renderCalendarPreviewGrid();
       closeHomeworkModal();
     }
 
@@ -2238,9 +2663,7 @@
 
         let innerHTML = `<span class="day-num">${i}</span>`;
 
-        if (ex) {
-          innerHTML += `<span style="font-size: 0.48rem; opacity: 0.8; margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 90%;">${escapeHTML(ex.subject)}</span>`;
-        }
+        if (ex) innerHTML += `<span style="font-size: 0.48rem; opacity: 0.8; margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 90%;">${escapeHTML(ex.subject)}</span>`;
 
         if (homeworks.length > 0) {
           const dotsHtml = homeworks.slice(0, 3).map(h => {
@@ -2334,7 +2757,7 @@
       updateExamWidgetUI();
       renderHomeworkWidgetSlide();
       setTimeout(updateOverallAverage, 0);
-      if (save) { saveSettings(); }
+      if (save) saveSettings();
     }
 
     function updateIndicators(count) {
@@ -2438,9 +2861,7 @@
       currentPosWidgetId = null;
       setTimeout(() => {
         const menu = document.getElementById("glassMenu");
-        if (menu && !menu.classList.contains("open")) {
-          menu.classList.add("open");
-        }
+        if (menu && !menu.classList.contains("open")) menu.classList.add("open");
       }, 50);
     }
 
@@ -2525,32 +2946,20 @@
       if (!was) cat.classList.add("expanded");
     }
 
-    function toggleMenu() {
-      const menu = document.getElementById("glassMenu");
-      menu.classList.toggle("open");
-      if (!menu.classList.contains("open")) setTimeout(() => document.querySelectorAll(".menu-category").forEach(c => c.classList.remove("expanded")), 300);
-    }
-
-    window.addEventListener("click", e => {
-      const posOverlay = document.getElementById("widgetPosOverlay");
-      if (posOverlay && posOverlay.classList.contains("open")) return;
-      if (document.querySelectorAll(".modal-overlay.open").length > 0) return;
-      const infoOv = document.getElementById("infoOverlay");
-      if (infoOv && infoOv.classList.contains("open")) return;
-
-      const menu = document.getElementById("glassMenu");
-      const btn = document.querySelector(".header-actions");
-      if (e.target.closest("#widgetSlidesToggles")) return;
-      if (e.target.closest("#widgetPosOverlay")) return;
-      if (menu.contains(e.target) || btn.contains(e.target)) return;
-      if (menu.classList.contains("open")) {
-        menu.classList.remove("open");
-        setTimeout(() => document.querySelectorAll(".menu-category").forEach(c => c.classList.remove("expanded")), 300);
-      }
-    });
-
     function selectEmoji(emoji, el) { selectedEmoji = emoji; document.querySelectorAll("#emojiPickerGrid .emoji-option").forEach(o => o.classList.remove("active")); el.classList.add("active"); }
     function selectEditEmoji(emoji, el) { selectedEditEmoji = emoji; document.querySelectorAll("#emojiEditPickerGrid .emoji-option").forEach(o => o.classList.remove("active")); el.classList.add("active"); }
+
+    function selectSubjectNewColor(color, el) {
+      selectedNewSubjectColor = color;
+      document.querySelectorAll("#subjectNewColorPicker .color-dot").forEach(d => d.classList.remove("active"));
+      if (el) el.classList.add("active");
+    }
+
+    function selectSubjectEditColor(color, el) {
+      selectedEditSubjectColor = color;
+      document.querySelectorAll("#subjectEditColorPicker .color-dot").forEach(d => d.classList.remove("active"));
+      if (el) el.classList.add("active");
+    }
 
     function updateGreeting() {
       const h = new Date().getHours();
@@ -2746,7 +3155,9 @@
         if (!sub[cat]) sub[cat] = [];
         sub[cat].push(grade);
         sub.meta = `${sub.klausuren ? sub.klausuren.length : 0} Klausuren, ${sub.tests ? sub.tests.length : 0} Tests`;
-        saveSubjects(); renderSubjects();
+        saveSubjects();
+        pulseSubjectName = sub.name;
+        refreshUI();
         if (currentActiveSubjectName === sub.name) openSubjectDetail(sub.name);
       }
       pendingSubject = "";
@@ -2783,7 +3194,9 @@
       if (n) {
         document.getElementById("modalSubjectInput").value = n;
         selectedEmoji = "📚";
+        selectedNewSubjectColor = "#007aff";
         document.querySelectorAll("#emojiPickerGrid .emoji-option").forEach((opt, i) => opt.classList.toggle("active", i === 0));
+        document.querySelectorAll("#subjectNewColorPicker .color-dot").forEach((d, i) => d.classList.toggle("active", i === 0));
         openSubjectModal();
       }
     }
@@ -2829,14 +3242,22 @@
       }
     }
 
-    function openSubjectModal() { document.body.classList.add("modal-open"); document.getElementById("subjectModal").classList.add("open"); setTimeout(() => document.getElementById("modalSubjectInput").focus(), 150); }
+    function openSubjectModal() {
+      document.body.classList.add("modal-open");
+      document.getElementById("subjectModal").classList.add("open");
+      selectedNewSubjectColor = "#007aff";
+      document.querySelectorAll("#subjectNewColorPicker .color-dot").forEach((d, i) => d.classList.toggle("active", i === 0));
+      setTimeout(() => document.getElementById("modalSubjectInput").focus(), 150);
+    }
     function closeSubjectModal() { document.getElementById("subjectModal").classList.remove("open"); checkModalState(); document.getElementById("modalSubjectInput").value = ""; }
     function handleSubjectKey(e) { if (e.key === "Enter") confirmAddSubject(); if (e.key === "Escape") closeSubjectModal(); }
     function confirmAddSubject() {
       const input = document.getElementById("modalSubjectInput");
       const name = input.value.trim(); if (!name) return;
       subjectsData.push({ name, emoji: selectedEmoji, klausuren: [], tests: [], meta: "0 Klausuren, 0 Tests" });
-      saveSubjects(); renderSubjects(); closeSubjectModal();
+      saveSubjects();
+      setColorForSubject(name, selectedNewSubjectColor);
+      closeSubjectModal();
     }
 
     function openSubjectEditModal() {
@@ -2844,7 +3265,12 @@
       document.getElementById("subjectDetailModal").classList.remove("open");
       document.getElementById("modalSubjectEditInput").value = sub.name;
       selectedEditEmoji = sub.emoji;
+      selectedEditSubjectColor = getColorForSubject(sub.name);
       document.querySelectorAll("#emojiEditPickerGrid .emoji-option").forEach(o => o.classList.toggle("active", o.textContent.trim() === sub.emoji));
+      const editPicker = document.getElementById("subjectEditColorPicker");
+      editPicker.innerHTML = SUBJECT_COLOR_PALETTE.map(c => 
+        `<div class="color-dot${c === selectedEditSubjectColor ? ' active' : ''}" style="background:${c}" onclick="selectSubjectEditColor('${c}', this)"></div>`
+      ).join("");
       document.body.classList.add("modal-open");
       document.getElementById("subjectEditModal").classList.add("open");
       setTimeout(() => document.getElementById("modalSubjectEditInput").focus(), 150);
@@ -2858,20 +3284,27 @@
       if (sub) {
         const oldName = sub.name;
         sub.name = newName; sub.emoji = selectedEditEmoji;
+
         if (oldName !== newName && appSettings.subjectColors && appSettings.subjectColors[oldName]) {
           appSettings.subjectColors[newName] = appSettings.subjectColors[oldName];
           delete appSettings.subjectColors[oldName];
-          for (const day in appSettings.timetable) (appSettings.timetable[day] || []).forEach(slot => { if (slot.subject === oldName) slot.subject = newName; });
-          saveSettings();
+        }
+        for (const day in appSettings.timetable) {
+          (appSettings.timetable[day] || []).forEach(slot => {
+            if (slot.subject === oldName) slot.subject = newName;
+          });
         }
         if (oldName !== newName && appSettings.weights && appSettings.weights[oldName]) {
           appSettings.weights[newName] = appSettings.weights[oldName];
           delete appSettings.weights[oldName];
-          saveSettings();
         }
         (appSettings.homework || []).forEach(hw => { if (hw.subject === oldName) hw.subject = newName; });
+
         saveSettings();
-        saveSubjects(); renderSubjects(); renderHomework();
+        saveSubjects();
+
+        setColorForSubject(newName, selectedEditSubjectColor);
+
         document.getElementById("subjectEditModal").classList.remove("open");
         openSubjectDetail(newName);
       }
@@ -2882,11 +3315,17 @@
     function executeDeleteSubject() {
       const deletedName = currentActiveSubjectName;
       subjectsData = subjectsData.filter(s => s.name !== deletedName);
-      if (appSettings.subjectColors && appSettings.subjectColors[deletedName]) { delete appSettings.subjectColors[deletedName]; saveSettings(); }
-      if (appSettings.weights && appSettings.weights[deletedName]) { delete appSettings.weights[deletedName]; saveSettings(); }
-      saveSubjects(); renderSubjects();
+      if (appSettings.subjectColors && appSettings.subjectColors[deletedName]) delete appSettings.subjectColors[deletedName];
+      if (appSettings.weights && appSettings.weights[deletedName]) delete appSettings.weights[deletedName];
+      for (const day in appSettings.timetable) {
+        appSettings.timetable[day] = (appSettings.timetable[day] || []).filter(slot => slot.subject !== deletedName);
+      }
+      appSettings.homework = (appSettings.homework || []).filter(h => h.subject !== deletedName);
+      saveSettings();
+      saveSubjects();
       currentActiveSubjectName = "";
       document.getElementById("subjectDeleteConfirmModal").classList.remove("open");
+      refreshUI();
       checkModalState();
     }
 
@@ -2992,6 +3431,199 @@
       if (map[id]) map[id]();
     }
 
+    function handleModalBackdrop(e, id) {
+      if (e.target.id !== id) return;
+      if (id === "statsModal") closeStatsModal();
+    }
+
+    /* ============================================================
+       STATISTIK
+       ============================================================ */
+    function openStatsModal() {
+      renderStats();
+      document.body.classList.add("modal-open");
+      document.getElementById("statsModal").classList.add("open");
+    }
+
+    function closeStatsModal() {
+      document.getElementById("statsModal").classList.remove("open");
+      checkModalState();
+    }
+
+    function renderStats() {
+      const container = document.getElementById("statsContent");
+      if (!container) return;
+
+      const validSubjects = subjectsData.filter(s => getSubjectAverage(s) !== null);
+      const avgs = validSubjects.map(s => getSubjectAverage(s));
+      const overall = avgs.length > 0 ? (avgs.reduce((a, b) => a + b, 0) / avgs.length) : null;
+
+      const allGrades = [];
+      subjectsData.forEach(sub => {
+        (sub.klausuren || []).forEach((g, i) => allGrades.push({ sub: sub.name, type: "klausur", val: parseFloat(g), index: i }));
+        (sub.tests || []).forEach((g, i) => allGrades.push({ sub: sub.name, type: "test", val: parseFloat(g), index: i }));
+      });
+
+      if (allGrades.length === 0) {
+        container.innerHTML = `
+          <div class="stats-empty">
+            📊 Noch keine Daten<br><br>
+            Trage Noten ein, um hier deine Statistik zu sehen.
+          </div>
+        `;
+        return;
+      }
+
+      const heroHtml = `
+        <div class="stats-hero">
+          <div class="stats-hero-label">Gesamtdurchschnitt</div>
+          <div class="stats-hero-value">${overall !== null ? overall.toFixed(1).replace(".", ",") : "—"}</div>
+          <div class="stats-hero-sub">${avgs.length} ${avgs.length === 1 ? "Fach" : "Fächer"} · ${allGrades.length} ${allGrades.length === 1 ? "Note" : "Noten"}</div>
+        </div>
+      `;
+
+      let highlightsHtml = "";
+      if (validSubjects.length > 0) {
+        const sorted = validSubjects.slice().sort((a, b) => getSubjectAverage(a) - getSubjectAverage(b));
+        const best = sorted[0];
+        const worst = sorted[sorted.length - 1];
+        const bestColor = getColorForSubject(best.name);
+        const worstColor = getColorForSubject(worst.name);
+        highlightsHtml = `
+          <div class="stats-highlights">
+            <div class="stats-hl">
+              <div class="stats-hl-dot" style="background: ${bestColor}; color: ${bestColor};"></div>
+              <div class="stats-hl-label">Bestes Fach</div>
+              <div class="stats-hl-name">${escapeHTML(best.emoji || "")} ${escapeHTML(best.name)}</div>
+              <div class="stats-hl-value" style="color: ${bestColor};">${getSubjectAverage(best).toFixed(1).replace(".", ",")}</div>
+            </div>
+            <div class="stats-hl">
+              <div class="stats-hl-dot" style="background: ${worstColor}; color: ${worstColor};"></div>
+              <div class="stats-hl-label">${validSubjects.length === 1 ? "Einziges Fach" : "Schlechtestes Fach"}</div>
+              <div class="stats-hl-name">${escapeHTML(worst.emoji || "")} ${escapeHTML(worst.name)}</div>
+              <div class="stats-hl-value" style="color: ${worstColor};">${getSubjectAverage(worst).toFixed(1).replace(".", ",")}</div>
+            </div>
+          </div>
+        `;
+      }
+
+      const barRows = validSubjects.slice().sort((a, b) => getSubjectAverage(a) - getSubjectAverage(b)).map(sub => {
+        const avg = getSubjectAverage(sub);
+        const color = getColorForSubject(sub.name);
+        const pct = Math.max(6, Math.min(100, ((6 - avg) / 5) * 100));
+        return `
+          <div class="stats-bar-row">
+            <div class="stats-bar-name">${escapeHTML(sub.emoji || "")} ${escapeHTML(sub.name)}</div>
+            <div class="stats-bar-track">
+              <div class="stats-bar-fill" style="width: ${pct}%; background: ${color}; box-shadow: 0 0 10px ${color}80;"></div>
+            </div>
+            <div class="stats-bar-value" style="color: ${color};">${avg.toFixed(1).replace(".", ",")}</div>
+          </div>
+        `;
+      }).join("");
+
+      const barHtml = `
+        <div class="stats-section">
+          <div class="stats-section-title">📊 Durchschnitt pro Fach</div>
+          ${barRows}
+        </div>
+      `;
+
+      const orderedGrades = [];
+      subjectsData.forEach(sub => {
+        (sub.klausuren || []).forEach(g => orderedGrades.push({ sub: sub.name, val: parseFloat(g) }));
+        (sub.tests || []).forEach(g => orderedGrades.push({ sub: sub.name, val: parseFloat(g) }));
+      });
+
+      let lineHtml = "";
+      if (orderedGrades.length >= 2) {
+        const W = 340, H = 140, padL = 24, padR = 10, padT = 14, padB = 22;
+        const innerW = W - padL - padR;
+        const innerH = H - padT - padB;
+        const n = orderedGrades.length;
+        const xStep = n > 1 ? innerW / (n - 1) : 0;
+        const yFor = v => padT + innerH * ((v - 1) / 5);
+
+        let gridLines = "";
+        for (let g = 1; g <= 6; g++) {
+          const y = yFor(g);
+          gridLines += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="var(--glass-border)" stroke-width="0.5" stroke-dasharray="2,3"/>`;
+          gridLines += `<text x="${padL - 6}" y="${y + 3}" font-size="8" text-anchor="end" fill="var(--text-sub)">${g}</text>`;
+        }
+
+        const points = orderedGrades.map((g, i) => ({
+          x: padL + i * xStep,
+          y: yFor(g.val),
+          color: getColorForSubject(g.sub)
+        }));
+
+        let pathD = "";
+        points.forEach((p, i) => {
+          if (i === 0) pathD += `M ${p.x} ${p.y} `;
+          else pathD += `L ${p.x} ${p.y} `;
+        });
+
+        let dots = "";
+        points.forEach(p => {
+          dots += `<circle cx="${p.x}" cy="${p.y}" r="3.5" fill="${p.color}" stroke="white" stroke-width="1.5" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));"/>`;
+        });
+
+        lineHtml = `
+          <div class="stats-section">
+            <div class="stats-section-title">📈 Notenverlauf</div>
+            <div class="stats-line-wrap">
+              <svg class="stats-line-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
+                ${gridLines}
+                <path d="${pathD}" fill="none" stroke="var(--accent-color, #007aff)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.55"/>
+                ${dots}
+              </svg>
+            </div>
+          </div>
+        `;
+      } else {
+        lineHtml = `
+          <div class="stats-section">
+            <div class="stats-section-title">📈 Notenverlauf</div>
+            <div class="stats-line-empty">Trage mindestens zwei Noten ein, um den Verlauf zu sehen.</div>
+          </div>
+        `;
+      }
+
+      const distribution = [0, 0, 0, 0, 0, 0];
+      allGrades.forEach(g => {
+        const rounded = Math.round(g.val);
+        if (rounded >= 1 && rounded <= 6) distribution[rounded - 1]++;
+      });
+      const maxDist = Math.max(...distribution, 1);
+
+      const distHtml = `
+        <div class="stats-section">
+          <div class="stats-section-title">📊 Notenverteilung</div>
+          <div class="stats-month-grid" style="height: 80px;">
+            ${[1,2,3,4,5,6].map((grade, idx) => {
+              const count = distribution[idx];
+              const h = (count / maxDist) * 100;
+              const color = grade <= 2 ? "#34c759" : grade <= 4 ? "#ff9500" : "#ff3b30";
+              return `
+                <div class="stats-month-col">
+                  <div class="stats-month-count">${count}</div>
+                  <div class="stats-month-bar" style="height: ${Math.max(3, h)}%; background: ${color}; box-shadow: 0 0 8px ${color}80;"></div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+          <div class="stats-month-labels">
+            <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span>
+          </div>
+        </div>
+      `;
+
+      container.innerHTML = heroHtml + highlightsHtml + barHtml + lineHtml + distHtml;
+    }
+
+    /* ============================================================
+       DRUCK
+       ============================================================ */
     function parseLocalDate(v) {
       const m = String(v).match(/^(\d{4})-(\d{2})-(\d{2})/);
       const d = m ? new Date(+m[1], +m[2] - 1, +m[3]) : new Date(v);
@@ -3015,14 +3647,92 @@
       return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
     }
 
+    function getSubjectPrintOptions(subjectName) {
+      if (!appSettings.subjectPrintOptions) appSettings.subjectPrintOptions = {};
+      if (!appSettings.subjectPrintOptions[subjectName]) {
+        appSettings.subjectPrintOptions[subjectName] = { avg: true, grades: true, exams: true, homework: true, doneHw: false };
+      }
+      return appSettings.subjectPrintOptions[subjectName];
+    }
+
     function openPrintOptionsModal() {
-      document.querySelectorAll("[data-print-opt]").forEach(el => {
-        const key = el.dataset.printOpt;
-        const on = appSettings.printOptions[key] !== false;
-        el.classList.toggle("active", on);
-      });
+      const container = document.getElementById("printOptionsContainer");
+      const isSubject = !!printSheetSingleSubject;
+
+      if (isSubject) {
+        const opts = getSubjectPrintOptions(printSheetSingleSubject);
+        container.innerHTML = buildSubjectPrintTogglesHTML(opts);
+      } else {
+        container.innerHTML = buildGlobalPrintTogglesHTML();
+        document.querySelectorAll("[data-print-opt]").forEach(el => {
+          const key = el.dataset.printOpt;
+          const on = appSettings.printOptions[key] !== false;
+          el.classList.toggle("active", on);
+        });
+      }
+
       document.body.classList.add("modal-open");
       document.getElementById("printOptionsModal").classList.add("open");
+    }
+
+    function buildGlobalPrintTogglesHTML() {
+      return `
+        <div class="widget-toggle-item" data-print-opt="avg" onclick="togglePrintOption('avg')">
+          <div class="widget-toggle-label">📊 Gesamtschnitt</div>
+          <div class="widget-toggle-switch"></div>
+        </div>
+        <div class="widget-toggle-item" data-print-opt="subjects" onclick="togglePrintOption('subjects')">
+          <div class="widget-toggle-label">📚 Fächer & Noten</div>
+          <div class="widget-toggle-switch"></div>
+        </div>
+        <div class="widget-toggle-item" data-print-opt="exams" onclick="togglePrintOption('exams')">
+          <div class="widget-toggle-label">📌 Klausuren & Termine</div>
+          <div class="widget-toggle-switch"></div>
+        </div>
+        <div class="widget-toggle-item" data-print-opt="homework" onclick="togglePrintOption('homework')">
+          <div class="widget-toggle-label">📝 Offene Hausaufgaben</div>
+          <div class="widget-toggle-switch"></div>
+        </div>
+        <div class="widget-toggle-item" data-print-opt="doneHw" onclick="togglePrintOption('doneHw')">
+          <div class="widget-toggle-label">✅ Erledigte Hausaufgaben</div>
+          <div class="widget-toggle-switch"></div>
+        </div>
+      `;
+    }
+
+    function buildSubjectPrintTogglesHTML(opts) {
+      return `
+        <div class="widget-toggle-item${opts.avg ? " active" : ""}" data-subj-opt="avg" onclick="toggleSubjectPrintOption('avg')">
+          <div class="widget-toggle-label">🎯 Fach-Schnitt</div>
+          <div class="widget-toggle-switch"></div>
+        </div>
+        <div class="widget-toggle-item${opts.grades ? " active" : ""}" data-subj-opt="grades" onclick="toggleSubjectPrintOption('grades')">
+          <div class="widget-toggle-label">📝 Noten (Klausuren & Tests)</div>
+          <div class="widget-toggle-switch"></div>
+        </div>
+        <div class="widget-toggle-item${opts.exams ? " active" : ""}" data-subj-opt="exams" onclick="toggleSubjectPrintOption('exams')">
+          <div class="widget-toggle-label">📌 Klausuren & Termine</div>
+          <div class="widget-toggle-switch"></div>
+        </div>
+        <div class="widget-toggle-item${opts.homework ? " active" : ""}" data-subj-opt="homework" onclick="toggleSubjectPrintOption('homework')">
+          <div class="widget-toggle-label">📚 Offene Hausaufgaben</div>
+          <div class="widget-toggle-switch"></div>
+        </div>
+        <div class="widget-toggle-item${opts.doneHw ? " active" : ""}" data-subj-opt="doneHw" onclick="toggleSubjectPrintOption('doneHw')">
+          <div class="widget-toggle-label">✅ Erledigte Hausaufgaben</div>
+          <div class="widget-toggle-switch"></div>
+        </div>
+      `;
+    }
+
+    function toggleSubjectPrintOption(key) {
+      if (!printSheetSingleSubject) return;
+      const opts = getSubjectPrintOptions(printSheetSingleSubject);
+      opts[key] = !opts[key];
+      saveSettings();
+      const el = document.querySelector(`[data-subj-opt="${key}"]`);
+      if (el) el.classList.toggle("active", opts[key]);
+      buildPrintSheet();
     }
 
     function closePrintOptionsModal() {
@@ -3032,6 +3742,7 @@
     }
 
     function togglePrintOption(key) {
+      if (printSheetSingleSubject) return;
       const cur = appSettings.printOptions[key] !== false;
       appSettings.printOptions[key] = !cur;
       saveSettings();
@@ -3040,9 +3751,13 @@
       buildPrintSheet();
     }
 
+    let printSheetSingleSubject = null;
+
     function buildPrintSheet() {
       const sheet = document.getElementById("printSheet");
       if (!sheet) return;
+
+      if (printSheetSingleSubject) return buildSubjectPrintSheet(printSheetSingleSubject);
 
       const opts = appSettings.printOptions || { ...DEFAULT_PRINT_OPTIONS };
       const accent = getPrintAccent();
@@ -3212,7 +3927,178 @@
       sheet.innerHTML = headHtml + body + `<div class="ps-foot">Erstellt mit Notio · ${now.toLocaleDateString("de-DE")}</div>`;
     }
 
+    function buildSubjectPrintSheet(subjectName) {
+      const sheet = document.getElementById("printSheet");
+      const sub = subjectsData.find(s => s.name === subjectName);
+      if (!sub) { buildPrintSheet(); return; }
+
+      const opts = getSubjectPrintOptions(subjectName);
+
+      const accent = getColorForSubject(sub.name);
+      sheet.style.setProperty("--ps-accent", accent);
+      const rgb = hexToRgb(accent) || { r: 29, g: 29, b: 31 };
+      sheet.style.setProperty("--ps-accent-soft", `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.10)`);
+
+      const de = n => n.toFixed(1).replace(".", ",");
+      const now = new Date();
+      const today = new Date(now); today.setHours(0, 0, 0, 0);
+      const name = (appSettings.userName || "").trim();
+      const avg = getSubjectAverage(sub);
+      const klCount = (sub.klausuren || []).length;
+      const teCount = (sub.tests || []).length;
+      const totalCount = klCount + teCount;
+
+      const gradeClass = g => {
+        const n = parseFloat(g);
+        if (isNaN(n)) return "";
+        if (n <= 2.5) return "ps-grade-good";
+        if (n <= 4.0) return "ps-grade-ok";
+        return "ps-grade-bad";
+      };
+      const w = ((appSettings.weights && appSettings.weights[sub.name]) || "60-40").replace("-", " / ");
+
+      const renderGrades = arr => (arr && arr.length)
+        ? '<div class="ps-grade-list">' + arr.map(g =>
+            `<span class="ps-grade ${gradeClass(g)}">${escapeHTML(String(g).replace(".", ","))}</span>`
+          ).join("") + '</div>'
+        : '<span class="ps-none">—</span>';
+
+      let hasAny = false;
+
+      const headHtml = `
+        <div class="ps-head">
+          <div>
+            <div class="ps-brand">${escapeHTML(sub.emoji)} ${escapeHTML(sub.name)}</div>
+            <div class="ps-sub">Fach-Übersicht</div>
+          </div>
+          <div class="ps-meta">
+            ${name ? "<strong>" + escapeHTML(name) + "</strong><br>" : ""}
+            Stand: ${now.toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" })}
+          </div>
+        </div>`;
+
+      let totalHtml = "";
+      if (opts.avg !== false) {
+        hasAny = true;
+        const subjectSub = totalCount === 0
+          ? "Noch keine Noten eingetragen"
+          : totalCount + (totalCount === 1 ? " Note" : " Noten") + " · Gewichtung " + w;
+        totalHtml = `
+          <div class="ps-total">
+            <div class="ps-total-label">Fach-Schnitt</div>
+            <div class="ps-total-value">${avg !== null ? de(avg) : "—"}</div>
+            <div class="ps-total-sub">${subjectSub}</div>
+          </div>`;
+      }
+
+      let gradesHtml = "";
+      if (opts.grades !== false) {
+        hasAny = true;
+        gradesHtml = `
+          <div class="ps-section">
+            <h2 class="ps-section-title">Klausuren (${klCount})</h2>
+            ${renderGrades(sub.klausuren)}
+          </div>
+          <div class="ps-section">
+            <h2 class="ps-section-title">Tests & Sonstige (${teCount})</h2>
+            ${renderGrades(sub.tests)}
+          </div>`;
+      }
+
+      let examsHtml = "";
+      if (opts.exams !== false) {
+        const upcoming = (appSettings.examsList || [])
+          .filter(e => (e.subject || "").toLowerCase() === sub.name.toLowerCase())
+          .map(e => ({ date: new Date(e.year, e.month - 1, e.day), subject: e.subject }))
+          .filter(e => !isNaN(e.date) && e.date >= today)
+          .sort((a, b) => a.date - b.date);
+        if (upcoming.length > 0) hasAny = true;
+
+        const itemsHtml = upcoming.length
+          ? upcoming.map(e => {
+              const days = Math.round((e.date - today) / 86400000);
+              const rel = days === 0 ? "heute" : days === 1 ? "morgen" : "in " + days + " Tagen";
+              const dateStr = e.date.toLocaleDateString("de-DE", { weekday: "short", day: "2-digit", month: "2-digit", year: "numeric" });
+              return `<li>
+                <span class="ps-ev-date">${escapeHTML(dateStr)}</span>
+                <span class="ps-ev-title">${escapeHTML(e.subject)}</span>
+                <span class="ps-ev-rel">${rel}</span>
+              </li>`;
+            }).join("")
+          : '<li><span class="ps-none">Keine kommenden Termine für dieses Fach.</span></li>';
+
+        examsHtml = `
+          <div class="ps-events">
+            <h2 class="ps-section-title">Kommende Klausuren & Termine</h2>
+            <ul>${itemsHtml}</ul>
+          </div>`;
+      }
+
+      const showOpen = opts.homework !== false;
+      const showDone = opts.doneHw === true;
+      let homeworkHtml = "";
+      if (showOpen || showDone) {
+        const hwAll = (appSettings.homework || []).filter(h => (h.subject || "").toLowerCase() === sub.name.toLowerCase());
+        const open = hwAll.filter(h => !h.done).sort((a, b) => (a.dueDate || "").localeCompare(b.dueDate || ""));
+        const done = hwAll.filter(h => h.done);
+        const list = showOpen ? open : [];
+        const listDone = showDone ? done : [];
+        if (list.length > 0 || listDone.length > 0) hasAny = true;
+
+        const renderHwItem = h => {
+          const due = parseLocalDate(h.dueDate);
+          const dueStr = isNaN(due) ? "" : due.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" });
+          const color = getColorForSubject(h.subject);
+          return `<li>
+            <span class="ps-hw-dot" style="background:${escapeHTML(color)}"></span>
+            <span class="ps-hw-subject">${escapeHTML(h.subject)}</span>
+            <span class="ps-hw-desc">${escapeHTML(h.description || "—")}</span>
+            <span class="ps-hw-due">${escapeHTML(dueStr)}</span>
+          </li>`;
+        };
+
+        const openHtml = list.length
+          ? '<ul class="ps-hw-list">' + list.map(renderHwItem).join("") + '</ul>'
+          : '<div class="ps-none" style="font-size:0.9em; padding:4px 0;">Keine offenen Hausaufgaben 🎉</div>';
+        const doneHtml = listDone.length
+          ? '<ul class="ps-hw-list ps-hw-list-done">' + listDone.map(renderHwItem).join("") + '</ul>'
+          : '';
+
+        homeworkHtml = `
+          <div class="ps-section">
+            ${showOpen ? `<h2 class="ps-section-title">Offene Hausaufgaben</h2>${openHtml}` : ""}
+            ${showDone && listDone.length ? `<h2 class="ps-section-title" style="margin-top:16px;">Erledigte Hausaufgaben</h2>${doneHtml}` : ""}
+          </div>`;
+      }
+
+      const body = hasAny
+        ? totalHtml + gradesHtml + examsHtml + homeworkHtml
+        : `<div class="ps-empty">
+             <div style="font-size:2.6em; margin-bottom:10px;">🖨️</div>
+             <strong>Nichts ausgewählt</strong>
+             <div style="margin-top:6px;">Aktiviere in den Optionen, was gedruckt werden soll.</div>
+           </div>`;
+
+      sheet.innerHTML = headHtml + body + `<div class="ps-foot">Erstellt mit Notio · ${now.toLocaleDateString("de-DE")}</div>`;
+    }
+
+    function shareSubject() {
+      if (!currentActiveSubjectName) return;
+      const sub = subjectsData.find(s => s.name === currentActiveSubjectName);
+      if (!sub) return;
+      printSheetSingleSubject = sub.name;
+      buildSubjectPrintSheet(sub.name);
+      const sc = document.getElementById("printPreview").querySelector(".print-scroll");
+      if (sc) sc.scrollTop = 0;
+      document.getElementById("subjectDetailModal").classList.remove("open");
+      document.body.classList.add("modal-open");
+      document.getElementById("printPreview").classList.add("open");
+      document.querySelector(".print-toolbar-title").textContent = `Fach teilen: ${sub.name}`;
+    }
+
     function openPrintPreview() {
+      printSheetSingleSubject = null;
+      document.querySelector(".print-toolbar-title").textContent = "Druckvorschau";
       buildPrintSheet();
       const sc = document.getElementById("printPreview").querySelector(".print-scroll");
       if (sc) sc.scrollTop = 0;
@@ -3220,6 +4106,8 @@
       document.getElementById("printPreview").classList.add("open");
     }
     function closePrintPreview() {
+      printSheetSingleSubject = null;
+      document.querySelector(".print-toolbar-title").textContent = "Druckvorschau";
       document.getElementById("printPreview").classList.remove("open");
       checkModalState();
     }
@@ -3269,32 +4157,23 @@
     async function backupShare() {
       const json = JSON.stringify(buildBackup(), null, 2);
       const fileName = backupFileName();
-
-      // Modal bleibt offen! Es liegt nur unter dem AirDrop-Menü.
-      // Nach erfolgreichem Teilen oder Abbruch sind wir automatisch wieder hier.
       const modal = document.getElementById("backupModal");
       if (!modal.classList.contains("open")) {
         document.body.classList.add("modal-open");
         modal.classList.add("open");
       }
-
       for (const type of ["application/json", "text/plain"]) {
         try {
           const file = new File([json], fileName, { type });
           if (navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({ files: [file], title: "Notio Backup" });
-            // Nur wenn das Teilen wirklich erfolgreich war, schließen wir das Modal
             setTimeout(() => { closeBackupModal(); }, 150);
             return;
           }
         } catch (e) {
-          if (e && e.name === "AbortError") {
-            // Nutzer hat abgebrochen → Modal bleibt offen, nichts weiter tun.
-            return;
-          }
+          if (e && e.name === "AbortError") return;
         }
       }
-
       showNotice("Teilen nicht möglich", "Dieser Browser kann die Datei nicht teilen. Nutze bitte „Als Datei speichern“.", "ℹ️");
     }
 
@@ -3306,21 +4185,21 @@
     let pendingImport = null;
 
     function parseBackup(obj) {
-      const isObj = v => v && typeof v === "object" && !Array.isArray(v);
-      if (!isObj(obj)) return null;
-      if (isObj(obj.settings)) {
-        let subs = null;
-        if (obj.subjects !== undefined && obj.subjects !== null) {
-          if (!Array.isArray(obj.subjects) || !obj.subjects.every(x => isObj(x) && typeof x.name === "string")) return null;
-          subs = obj.subjects;
-        }
-        return { settings: obj.settings, subjects: subs, exportedAt: obj.exportedAt || null };
-      }
-      if ("theme" in obj || "accentColor" in obj || "examsList" in obj || "timetable" in obj || "homework" in obj) {
-        return { settings: obj, subjects: null, exportedAt: null };
-      }
-      return null;
+  const isObj = v => v && typeof v === "object" && !Array.isArray(v);
+  if (!isObj(obj)) return null;
+  if (isObj(obj.settings)) {
+    let subs = null;
+    if (obj.subjects !== undefined && obj.subjects !== null) {
+      if (!Array.isArray(obj.subjects) || !obj.subjects.every(x => isObj(x) && typeof x.name === "string")) return null;
+      subs = obj.subjects;
     }
+    return { settings: obj.settings, subjects: subs, exportedAt: obj.exportedAt || null };
+  }
+  if ("theme" in obj || "accentColor" in obj || "examsList" in obj || "timetable" in obj || "homework" in obj) {
+    return { settings: obj, subjects: null, exportedAt: null };
+  }
+  return null;
+}
 
     function handleBackupFile(input) {
       const file = input.files && input.files[0];
