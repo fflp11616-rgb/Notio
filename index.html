@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -44,7 +46,7 @@
       --ambient-1: transparent;
       --ambient-2: transparent;
       --ambient-3: transparent;
-      --glow-intensity: 0.005;
+      --glow-intensity: 0.010;
     }
 
     body.dark-mode {
@@ -124,6 +126,25 @@
     .app-container { width: 100%; max-width: 440px; position: relative; z-index: 1; transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
     body.modal-open .app-container > *:not(.modal-overlay) { opacity: 0; pointer-events: none; transform: scale(0.98) translateZ(0); transition: opacity 0.3s ease, transform 0.3s ease; }
 
+    body.first-load .overview-card { animation: firstLoadFadeUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both; }
+    body.first-load .quick-input-bar { animation: firstLoadFadeUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both; }
+    body.first-load .section-header { animation: firstLoadFadeUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.22s both; }
+    body.first-load .subject-empty-card { animation: firstLoadFadeUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.30s both; }
+    body.first-load .subject-add-card { animation: firstLoadFadeUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.30s both; }
+    body.first-load .homework-box { animation: firstLoadFadeUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.42s both; }
+    body.first-load .timetable-preview-vertical { animation: firstLoadFadeUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.54s both; }
+    body.first-load .footer-buttons { animation: firstLoadFadeUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.66s both; }
+    @keyframes firstLoadFadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes welcomePulse {
+      0% { box-shadow: var(--glass-shadow), 0 0 0 0 color-mix(in srgb, var(--accent-color) 45%, transparent); }
+      70% { box-shadow: var(--glass-shadow), 0 0 0 16px color-mix(in srgb, var(--accent-color) 0%, transparent); }
+      100% { box-shadow: var(--glass-shadow), 0 0 0 0 color-mix(in srgb, var(--accent-color) 0%, transparent); }
+    }
+    body.first-load .subject-empty-card { animation: firstLoadFadeUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.30s both, welcomePulse 2.4s ease 1.4s 1; }
+
     .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
     .greeting-box { display: flex; flex-direction: column; }
     .app-title { font-size: 1.45rem; font-weight: 750; letter-spacing: -0.7px; }
@@ -179,27 +200,52 @@
 
     .widget-pos-overlay { position: fixed; inset: 0; z-index: 1100; display: flex; align-items: flex-start; justify-content: flex-start; pointer-events: none; padding-top: calc(env(safe-area-inset-top) + 20px); padding-left: 20px; padding-right: 20px; padding-bottom: calc(env(safe-area-inset-bottom) + 20px); }
     .widget-pos-overlay.open { pointer-events: auto; }
-    .widget-pos-backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.35); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); opacity: 0; transition: opacity 0.3s ease; }
+    .widget-pos-backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.35); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); opacity: 0; transition: opacity 0.3s ease; transform: translateZ(0); isolation: isolate; }
     .widget-pos-overlay.open .widget-pos-backdrop { opacity: 1; }
-    .widget-pos-panel { position: relative; width: 100%; max-width: 320px; max-height: 85vh; overflow-y: auto; overscroll-behavior: contain; padding: 22px; border-radius: 26px; background: linear-gradient(145deg, var(--glass-sheen-a), var(--glass-sheen-b)), var(--glass-bg); border: 1px solid var(--glass-border); backdrop-filter: blur(45px) saturate(120%); -webkit-backdrop-filter: blur(45px) saturate(120%); box-shadow: 0 45px 100px rgba(0,0,0,0.35), inset 0 1px 0 var(--glass-highlight); transform: translateX(-120%); opacity: 0; transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease; }
-    .widget-pos-overlay.open .widget-pos-panel { transform: translateX(0); opacity: 1; }
+    .widget-pos-panel { position: relative; width: 100%; max-width: 320px; max-height: 85vh; overflow-y: auto; overscroll-behavior: contain; padding: 22px; border-radius: 26px; background: linear-gradient(145deg, var(--glass-sheen-a), var(--glass-sheen-b)), var(--glass-bg); border: 1px solid var(--glass-border); backdrop-filter: blur(45px) saturate(120%); -webkit-backdrop-filter: blur(45px) saturate(120%); box-shadow: 0 45px 100px rgba(0,0,0,0.35), inset 0 1px 0 var(--glass-highlight); transform: translateX(-120%) translateZ(0); opacity: 0; transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease; will-change: transform; }
+    .widget-pos-overlay.open .widget-pos-panel { transform: translateX(0) translateZ(0); opacity: 1; }
     .widget-pos-header { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
     .widget-pos-icon { width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: linear-gradient(145deg, var(--glass-sheen-a), var(--glass-sheen-b)), var(--input-bg); border: 1px solid var(--glass-border); font-size: 1.35rem; flex-shrink: 0; }
     .widget-pos-title { font-size: 1.05rem; font-weight: 750; color: var(--text-color); line-height: 1.2; }
     .widget-pos-subtitle { font-size: 0.72rem; color: var(--text-sub); margin-top: 2px; }
     .widget-pos-hint { font-size: 0.78rem; color: var(--text-sub); margin-top: 12px; margin-bottom: 16px; line-height: 1.4; }
     .widget-pos-numbers { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; position: relative; }
-    .widget-pos-num-item { display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-radius: 14px; background: var(--input-bg); border: 1px solid var(--glass-border); cursor: pointer; transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), background 0.25s ease, border-color 0.25s ease, box-shadow 0.35s ease; -webkit-user-select: none; user-select: none; }
-    .widget-pos-num-item:hover { background: rgba(255, 255, 255, 0.28); transform: translateX(3px); }
-    .widget-pos-num-item:active { transform: scale(0.98); }
-    .widget-pos-num-item.current { border-color: var(--accent-color); background: color-mix(in srgb, var(--accent-color) 18%, var(--input-bg)); transform: scale(1.04) translateZ(0); box-shadow: 0 12px 30px color-mix(in srgb, var(--accent-color) 35%, transparent), 0 0 0 1px var(--accent-color), inset 0 1px 0 var(--glass-highlight); z-index: 2; }
+
+    .widget-pos-num-item {
+      display: flex; align-items: center; gap: 14px; padding: 12px 16px;
+      border-radius: 14px; background: var(--input-bg); border: 1px solid var(--glass-border);
+      cursor: pointer; transform: translateZ(0); backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      will-change: transform;
+      transition: box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.25s ease, border-color 0.25s ease;
+      -webkit-user-select: none; user-select: none;
+    }
+    .widget-pos-num-item:hover { background: rgba(255, 255, 255, 0.28); box-shadow: 0 8px 22px rgba(0, 0, 0, 0.10); }
+    .widget-pos-num-item:active { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12); }
+    .widget-pos-num-item.current { border-color: var(--accent-color); background: color-mix(in srgb, var(--accent-color) 18%, var(--input-bg)); box-shadow: 0 12px 30px color-mix(in srgb, var(--accent-color) 35%, transparent), 0 0 0 1px var(--accent-color), inset 0 1px 0 var(--glass-highlight); z-index: 2; }
     .widget-pos-num-item.current .num-label { font-weight: 800; }
-    .widget-pos-num-item .num-circle { width: 34px; height: 34px; border-radius: 11px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.12); border: 1px solid var(--glass-border); font-weight: 800; font-size: 0.95rem; color: var(--text-sub); flex-shrink: 0; transition: background 0.25s ease, color 0.25s ease, transform 0.35s ease, box-shadow 0.35s ease; }
-    .widget-pos-num-item.current .num-circle { background: var(--accent-color, #007aff); color: #fff; border-color: transparent; transform: scale(1.1); box-shadow: 0 6px 18px color-mix(in srgb, var(--accent-color) 55%, transparent); }
+    .widget-pos-num-item .num-circle { width: 34px; height: 34px; border-radius: 11px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.12); border: 1px solid var(--glass-border); font-weight: 800; font-size: 0.95rem; color: var(--text-sub); flex-shrink: 0; transition: background 0.25s ease, color 0.25s ease, box-shadow 0.35s ease; }
+    .widget-pos-num-item.current .num-circle { background: var(--accent-color, #007aff); color: #fff; border-color: transparent; box-shadow: 0 6px 18px color-mix(in srgb, var(--accent-color) 55%, transparent); }
     .widget-pos-num-item .num-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
     .widget-pos-num-item .num-label { font-size: 0.85rem; font-weight: 650; color: var(--text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: font-weight 0.2s ease; }
     .widget-pos-num-item .num-sub { font-size: 0.68rem; color: var(--text-sub); }
     .widget-pos-actions { display: flex; gap: 10px; }
+
+    .widget-pick-item {
+      display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+      border-radius: 14px; background: var(--input-bg); border: 1px solid var(--glass-border);
+      cursor: pointer; transform: translateZ(0); backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      will-change: transform;
+      transition: box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.25s ease;
+      -webkit-user-select: none; user-select: none; margin-bottom: 8px;
+    }
+    .widget-pick-item:last-child { margin-bottom: 0; }
+    .widget-pick-item:hover { background: rgba(255, 255, 255, 0.28); box-shadow: 0 8px 22px rgba(0, 0, 0, 0.10); }
+    .widget-pick-item:active { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12); }
+    .widget-pick-item.disabled { opacity: 0.4; pointer-events: none; }
+    .widget-pick-item .wp-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: linear-gradient(145deg, var(--glass-sheen-a), var(--glass-sheen-b)), var(--input-bg); border: 1px solid var(--glass-border); font-size: 1.25rem; flex-shrink: 0; }
+    .widget-pick-item .wp-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .widget-pick-item .wp-label { font-size: 0.88rem; font-weight: 650; color: var(--text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .widget-pick-item .wp-sub { font-size: 0.7rem; color: var(--text-sub); }
 
     .glow-slider { touch-action: pan-y; width: 100%; -webkit-appearance: none; -moz-appearance: none; appearance: none; height: 6px; border-radius: 3px; background: var(--input-bg); border: 1px solid var(--glass-border); outline: none; margin: 8px 0 0 0; padding: 0; cursor: pointer; display: block; box-sizing: border-box; }
     .glow-slider::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: transparent; border: none; padding: 0; margin: 0; }
@@ -337,8 +383,8 @@
     .timetable-preview-vertical.expanded .tt-expand-btn .tt-chevron { transform: rotate(180deg); }
 
     .scroll-picker-container { display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow-y: auto; overscroll-behavior: contain; padding: 4px; }
-    .scroll-picker-item { padding: 12px; text-align: center; border-radius: 12px; background: var(--input-bg); border: 1px solid var(--glass-border); font-size: 0.9rem; font-weight: 650; cursor: pointer; transition: transform 0.2s ease; }
-    .scroll-picker-item:hover { background: rgba(255, 255, 255, 0.28); transform: scale(1.02); }
+    .scroll-picker-item { padding: 12px; text-align: center; border-radius: 12px; background: var(--input-bg); border: 1px solid var(--glass-border); font-size: 0.9rem; font-weight: 650; cursor: pointer; transform: translateZ(0); backface-visibility: hidden; -webkit-backface-visibility: hidden; transition: background 0.2s ease, box-shadow 0.25s ease; }
+    .scroll-picker-item:hover { background: rgba(255, 255, 255, 0.28); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08); }
     .scroll-picker-item.active { border-color: var(--accent-color); background: color-mix(in srgb, var(--accent-color) calc(var(--has-accent) * 40%), var(--input-bg)); font-weight: 800; }
 
     .tt-edit-btn { font-size: 0.75rem; font-weight: 700; background: linear-gradient(135deg, var(--glass-sheen-a), var(--glass-sheen-b)), var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-color); padding: 6px 14px; border-radius: 10px; cursor: pointer; backdrop-filter: blur(20px); box-shadow: var(--glass-shadow); transition: transform 0.2s ease, background 0.2s ease; }
@@ -353,18 +399,75 @@
     .smart-subject-pill:hover { background: rgba(255, 255, 255, 0.28); transform: scale(1.05); }
 
     .time-picker-wrapper { display: flex; gap: 8px; align-items: center; justify-content: center; background: var(--input-bg); border: 1px solid var(--glass-border); border-radius: 16px; padding: 10px; margin-top: 4px; backdrop-filter: blur(20px); }
-    .time-picker-col { display: flex; flex-direction: column; align-items: center; height: 100px; overflow-y: scroll; overscroll-behavior: contain; scroll-snap-type: y mandatory; width: 52px; border-radius: 10px; background: rgba(255,255,255,0.15); position: relative; padding: 32px 0; }
+    .time-picker-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100px;
+      overflow-y: scroll;
+      overscroll-behavior: contain;
+      scroll-snap-type: y mandatory;
+      width: 52px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.15);
+      position: relative;
+      padding: 32px 0;
+      touch-action: pan-y;
+      -webkit-overflow-scrolling: touch;
+    }
+    .time-picker-col * { touch-action: pan-y; -webkit-user-select: none; user-select: none; }
     body.dark-mode .time-picker-col { background: rgba(255,255,255,0.05); }
-    .time-picker-item { height: 36px; min-height: 36px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 600; color: var(--text-sub); scroll-snap-align: center; cursor: pointer; width: 100%; transition: color 0.2s ease, transform 0.2s ease, font-size 0.2s ease; }
-    .time-picker-item.selected { color: var(--text-color); font-size: 1.15rem; font-weight: 800; transform: scale(1.05); }
+    .time-picker-item { height: 36px; min-height: 36px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 600; color: var(--text-sub); scroll-snap-align: center; cursor: pointer; width: 100%; transition: color 0.2s ease, font-size 0.2s ease; }
+    .time-picker-item.selected { color: var(--text-color); font-size: 1.15rem; font-weight: 800; }
     .time-picker-separator { font-size: 1.1rem; font-weight: 800; color: var(--text-color); padding-bottom: 2px; }
     .time-preview-badge { text-align: center; font-size: 0.78rem; font-weight: 700; color: var(--text-color); margin-top: 6px; padding: 6px; background: var(--input-bg); border-radius: 10px; border: 1px solid var(--glass-border); }
 
+    .mode-tabs {
+      display: flex;
+      gap: 4px;
+      padding: 4px;
+      border-radius: 14px;
+      background: var(--input-bg);
+      border: 1px solid var(--glass-border);
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .mode-tab {
+      flex: 1;
+      padding: 9px 12px;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      color: var(--text-sub);
+      font-size: 0.82rem;
+      font-weight: 650;
+      cursor: pointer;
+      transition: color 0.25s ease;
+      position: relative;
+      z-index: 2;
+    }
+    .mode-tab.active { color: var(--text-color); font-weight: 750; }
+    .mode-tabs::before {
+      content: '';
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: calc(50% - 4px);
+      height: calc(100% - 8px);
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--glass-sheen-a), var(--glass-sheen-b)), var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08), inset 0 1px 0 var(--glass-highlight);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1;
+    }
+    .mode-tabs.mode-date::before { transform: translateX(100%); }
+
     .modal-overlay { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity: 0; pointer-events: none; visibility: hidden; transition: opacity 0.3s ease, visibility 0s linear 0.3s; z-index: 1000; transform: translateZ(0); isolation: isolate; }
     .modal-overlay.open { opacity: 1; pointer-events: auto; visibility: visible; transition: opacity 0.3s ease, visibility 0s linear 0s; }
-    .modal-card { width: 100%; max-width: 390px; max-height: 90vh; display: flex; flex-direction: column; padding: 20px 22px; border-radius: 26px; background: linear-gradient(145deg, var(--glass-sheen-a), var(--glass-sheen-b)), var(--glass-bg); border: 1px solid var(--glass-border); backdrop-filter: blur(45px) saturate(120%); -webkit-backdrop-filter: blur(45px) saturate(120%); box-shadow: 0 45px 100px rgba(0,0,0,0.35), inset 0 1px 0 var(--glass-highlight); transform: translateY(20px) scale(0.95); opacity: 0; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .modal-card { width: 100%; max-width: 390px; max-height: 90vh; display: flex; flex-direction: column; padding: 20px 22px; border-radius: 26px; background: linear-gradient(145deg, var(--glass-sheen-a), var(--glass-sheen-b)), var(--glass-bg); border: 1px solid var(--glass-border); backdrop-filter: blur(45px) saturate(120%); -webkit-backdrop-filter: blur(45px) saturate(120%); box-shadow: 0 45px 100px rgba(0,0,0,0.35), inset 0 1px 0 var(--glass-highlight); transform: translateY(20px) scale(0.95) translateZ(0); opacity: 0; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
     .modal-card::-webkit-scrollbar { display: none; }
-    .modal-overlay.open .modal-card { transform: translateY(0) scale(1); opacity: 1; }
+    .modal-overlay.open .modal-card { transform: translateY(0) scale(1) translateZ(0); opacity: 1; }
     .modal-title { margin-bottom: 8px; font-size: 1.05rem; font-weight: 750; flex-shrink: 0; }
     .modal-buttons { display: flex; gap: 10px; margin-top: 10px; flex-shrink: 0; }
     .btn-cancel { flex: 1; padding: 10px 16px; border-radius: 13px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-color); font-size: 0.82rem; font-weight: 650; cursor: pointer; backdrop-filter: blur(20px); transform: translate3d(0, 0, 0); backface-visibility: hidden; -webkit-backface-visibility: hidden; will-change: transform; transition: transform 0.3s cubic-bezier(.16,1,.3,1), background 0.2s ease; }
@@ -465,13 +568,12 @@
     .info-overlay.open .info-panel { transform: translateY(0); opacity: 1; }
     .info-panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-shrink: 0; }
     .info-panel-title { font-size: 1.1rem; font-weight: 750; }
-    .info-close-btn { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-color); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem; transition: transform 0.25s ease, background 0.2s ease; }
-    .info-close-btn:hover { transform: rotate(90deg); background: rgba(255,255,255,0.28); }
+    .info-close-btn { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-color); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem; transition: background 0.2s ease; transform: translateZ(0); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+    .info-close-btn:hover { box-shadow: 0 0 0 2px var(--accent-color); background: rgba(255,255,255,0.28); }
     .info-panel-content { font-size: 0.88rem; line-height: 1.6; color: var(--text-color); overflow-y: auto; overscroll-behavior: contain; }
     .info-panel-content p { margin-bottom: 12px; }
     .info-panel-content strong { font-weight: 750; }
 
-    /* Statistik */
     .stats-hero { padding: 22px 20px 20px; border-radius: 20px; background: linear-gradient(145deg, var(--glass-sheen-a), var(--glass-sheen-b)), var(--input-bg); border: 1px solid var(--glass-border); text-align: center; margin-bottom: 16px; position: relative; overflow: hidden; }
     .stats-hero::after { content: ""; position: absolute; width: 300px; height: 200px; left: 50%; top: -100px; transform: translateX(-50%); background: radial-gradient(closest-side, color-mix(in srgb, var(--accent-color) 80%, transparent), transparent 70%); opacity: calc(var(--has-accent) * 0.35); pointer-events: none; }
     .stats-hero-label { position: relative; z-index: 1; font-size: 0.7rem; font-weight: 800; letter-spacing: 1.6px; text-transform: uppercase; color: var(--text-sub); }
@@ -508,9 +610,7 @@
       .glass-menu { right: -4px; width: min(310px, calc(100vw - 28px)); }
     }
 
-    /* ============================================================
-       DRUCKVORSCHAU
-       ============================================================ */
+    /* Druck */
     .print-preview { padding: 0; align-items: stretch; justify-content: flex-start; flex-direction: column; background: rgba(8, 10, 16, 0.72); z-index: 1300; }
     .print-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: calc(env(safe-area-inset-top) + 12px) 16px 12px; flex-shrink: 0; }
     .print-toolbar-title { font-size: 1.02rem; font-weight: 750; color: #fff; }
@@ -659,7 +759,7 @@
               <div class="menu-category-content"><div class="menu-category-clip"><div class="menu-category-pad">
                 <div class="menu-section">
                   <div class="menu-label">Slides & Position</div>
-                  <div style="font-size:0.72rem; color:var(--text-sub); margin-bottom: 8px;">Tippe auf den <strong>Namen</strong>, um die Position zu ändern. Der Schalter schaltet an/aus.</div>
+                  <div style="font-size:0.72rem; color:var(--text-sub); margin-bottom: 8px;">Tippe auf eine <strong>Nummer</strong>, um zu wählen, welches Widget dort stehen soll. Der Schalter aktiviert/deaktiviert ein Widget.</div>
                   <div id="widgetSlidesToggles" style="display: flex; flex-direction: column; gap: 6px;"></div>
                 </div>
               </div></div></div>
@@ -674,14 +774,14 @@
                 <div class="menu-section" style="margin-top: 10px;">
                   <div class="menu-label">Ambient-Farbe</div>
                   <div class="color-picker-grid-extended" id="colorPickerGrid">
-                    <div class="color-dot active" style="background:#ffffff" onclick="setThemeColor('#ffffff', this)"></div>
+                    <div class="color-dot" style="background:#ffffff" onclick="setThemeColor('#ffffff', this)"></div>
                     <div class="color-dot" style="background:#007aff" onclick="setThemeColor('#007aff', this)"></div>
                     <div class="color-dot" style="background:#5856d6" onclick="setThemeColor('#5856d6', this)"></div>
                     <div class="color-dot" style="background:#af52de" onclick="setThemeColor('#af52de', this)"></div>
                     <div class="color-dot" style="background:#ff2d55" onclick="setThemeColor('#ff2d55', this)"></div>
                     <div class="color-dot" style="background:#ff9500" onclick="setThemeColor('#ff9500', this)"></div>
                     <div class="color-dot" style="background:#34c759" onclick="setThemeColor('#34c759', this)"></div>
-                    <div class="color-dot" style="background:#30b0c7" onclick="setThemeColor('#30b0c7', this)"></div>
+                    <div class="color-dot active" style="background:#30b0c7" onclick="setThemeColor('#30b0c7', this)"></div>
                     <div class="color-dot" style="background:#e06c75" onclick="setThemeColor('#e06c75', this)"></div>
                     <div class="color-dot" style="background:#98c379" onclick="setThemeColor('#98c379', this)"></div>
                     <div class="color-dot" style="background:#61afef" onclick="setThemeColor('#61afef', this)"></div>
@@ -703,7 +803,7 @@
                 </div>
                 <div class="menu-section" style="margin-top: 10px;">
                   <div class="menu-label">Glow-Intensität</div>
-                  <input type="range" min="0" max="0.02" step="0.001" value="0.005" class="glow-slider" id="glowIntensitySlider" oninput="setGlowIntensity(this.value)">
+                  <input type="range" min="0" max="0.02" step="0.001" value="0.010" class="glow-slider" id="glowIntensitySlider" oninput="setGlowIntensity(this.value)">
                 </div>
               </div></div></div>
             </div>
@@ -785,16 +885,16 @@
     <div class="widget-pos-backdrop" onclick="closeWidgetPosModal()"></div>
     <div class="widget-pos-panel">
       <div class="widget-pos-header">
-        <div class="widget-pos-icon" id="widgetPosIcon">📊</div>
+        <div class="widget-pos-icon" id="widgetPosIcon">🎛️</div>
         <div>
-          <div class="widget-pos-title" id="widgetPosTitle">Gesamtdurchschnitt</div>
-          <div class="widget-pos-subtitle">Position in der Liste</div>
+          <div class="widget-pos-title" id="widgetPosTitle">Reihenfolge</div>
+          <div class="widget-pos-subtitle" id="widgetPosSubtitle">Tippe auf eine Position</div>
         </div>
       </div>
-      <div class="widget-pos-hint">Wähle die neue Position. Die anderen Widgets rutschen automatisch nach.</div>
+      <div class="widget-pos-hint" id="widgetPosHint">Was soll an dieser Position stehen?</div>
       <div class="widget-pos-numbers" id="widgetPosNumbers"></div>
       <div class="widget-pos-actions">
-        <button class="btn-cancel" onclick="closeWidgetPosModal()">Abbrechen</button>
+        <button class="btn-cancel" onclick="closeWidgetPosModal()">Fertig</button>
       </div>
     </div>
   </div>
@@ -875,15 +975,15 @@
         <div class="menu-label" style="margin-top: 10px;">Uhrzeit</div>
         <div style="display: flex; gap: 8px; align-items: center; justify-content: center;">
           <div class="time-picker-wrapper" style="flex:1;">
-            <div class="time-picker-col" id="colStartHour" onscroll="onPickerScroll('StartHour')" onpointerup="onPickerRelease('StartHour')"></div>
+            <div class="time-picker-col" id="colStartHour" onscroll="onPickerScroll('StartHour')"></div>
             <div class="time-picker-separator">:</div>
-            <div class="time-picker-col" id="colStartMin" onscroll="onPickerScroll('StartMin')" onpointerup="onPickerRelease('StartMin')"></div>
+            <div class="time-picker-col" id="colStartMin" onscroll="onPickerScroll('StartMin')"></div>
           </div>
           <span style="font-weight: 800; color: var(--text-sub);">bis</span>
           <div class="time-picker-wrapper" style="flex:1;">
-            <div class="time-picker-col" id="colEndHour" onscroll="onPickerScroll('EndHour')" onpointerup="onPickerRelease('EndHour')"></div>
+            <div class="time-picker-col" id="colEndHour" onscroll="onPickerScroll('EndHour')"></div>
             <div class="time-picker-separator">:</div>
-            <div class="time-picker-col" id="colEndMin" onscroll="onPickerScroll('EndMin')" onpointerup="onPickerRelease('EndMin')"></div>
+            <div class="time-picker-col" id="colEndMin" onscroll="onPickerScroll('EndMin')"></div>
           </div>
         </div>
         <div class="time-preview-badge" id="timePreviewBadge">Ausgewählt: 08:00 - 09:30</div>
@@ -995,7 +1095,11 @@
   <div class="modal-overlay" id="wizardDaysModal" onclick="handleModalBackground(event, 'wizardDaysModal')">
     <div class="modal-card" onclick="event.stopPropagation()">
       <div class="modal-title" id="wizardDaysTitle">Klausur eintragen (2/2) ⏳</div>
-      <input type="text" id="wizardDaysInput" class="name-input" placeholder="z.B. 5 oder 29. September" onkeydown="handleWizardDaysKey(event)" style="margin-bottom: 12px;">
+      <div class="mode-tabs" id="wizardModeTabs">
+        <button class="mode-tab active" id="wizardTabDays" onclick="setWizardMode('days')">In X Tagen</button>
+        <button class="mode-tab" id="wizardTabDate" onclick="setWizardMode('date')">Am Datum</button>
+      </div>
+      <input type="text" id="wizardDaysInput" class="name-input" placeholder="z.B. 5" onkeydown="handleWizardDaysKey(event)" style="margin-bottom: 12px;">
       <div class="modal-buttons" style="margin-top: 0;">
         <button class="btn-cancel" onclick="closeWizardDaysModal()">Zurück</button>
         <button class="btn-primary" style="flex:1" onclick="confirmWizardDays()">Speichern</button>
@@ -1105,7 +1209,7 @@
   <div class="modal-overlay" id="glassErrorModal" onclick="closeGlassErrorModal()">
     <div class="modal-card" onclick="event.stopPropagation()" style="max-width: 330px; background: linear-gradient(145deg, rgba(60, 30, 35, 0.75), rgba(30, 25, 28, 0.65)); border-color: rgba(255, 90, 90, 0.35);">
       <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;"><span style="font-size: 1.4rem;">⚠️</span><div class="modal-title" style="margin-bottom: 0; color: #ff6b6b;">Ungültige Eingabe</div></div>
-      <div style="font-size: 0.84rem; color: #fff; font-weight: 600; margin-bottom: 16px;">Im Notensystem sind nur Werte von <strong style="color: #ff6b6b;">1.0 bis 6.0</strong> erlaubt.</div>
+      <div style="font-size: 0.84rem; color: #fff; font-weight: 600; margin-bottom: 16px;" id="glassErrorText">Im Notensystem sind nur Werte von <strong style="color: #ff6b6b;">1.0 bis 6.0</strong> erlaubt.</div>
       <button class="btn-primary" style="width: 100%; padding: 11px; background: rgba(255, 90, 90, 0.25); border-color: rgba(255, 90, 90, 0.5); color: #fff;" onclick="closeGlassErrorModal()">Verstanden</button>
     </div>
   </div>
@@ -1174,14 +1278,14 @@
       <div style="margin-top: 10px;">
         <div class="menu-label" style="margin-bottom: 4px;">🎨 Farbe für dieses Fach</div>
         <div class="color-picker-grid-extended" id="subjectNewColorPicker">
-          <div class="color-dot active" style="background:#007aff" onclick="selectSubjectNewColor('#007aff', this)"></div>
+          <div class="color-dot active" style="background:#30b0c7" onclick="selectSubjectNewColor('#30b0c7', this)"></div>
+          <div class="color-dot" style="background:#007aff" onclick="selectSubjectNewColor('#007aff', this)"></div>
           <div class="color-dot" style="background:#5856d6" onclick="selectSubjectNewColor('#5856d6', this)"></div>
           <div class="color-dot" style="background:#af52de" onclick="selectSubjectNewColor('#af52de', this)"></div>
           <div class="color-dot" style="background:#ff2d55" onclick="selectSubjectNewColor('#ff2d55', this)"></div>
           <div class="color-dot" style="background:#ff9500" onclick="selectSubjectNewColor('#ff9500', this)"></div>
           <div class="color-dot" style="background:#ffcc00" onclick="selectSubjectNewColor('#ffcc00', this)"></div>
           <div class="color-dot" style="background:#34c759" onclick="selectSubjectNewColor('#34c759', this)"></div>
-          <div class="color-dot" style="background:#30b0c7" onclick="selectSubjectNewColor('#30b0c7', this)"></div>
           <div class="color-dot" style="background:#e06c75" onclick="selectSubjectNewColor('#e06c75', this)"></div>
           <div class="color-dot" style="background:#98c379" onclick="selectSubjectNewColor('#98c379', this)"></div>
           <div class="color-dot" style="background:#61afef" onclick="selectSubjectNewColor('#61afef', this)"></div>
@@ -1305,8 +1409,12 @@
   <script>
 
     let appSettings = {
-      userName: "", theme: "auto", accentColor: "#ffffff", patternShape: "circle",
-      glowIntensity: 0.005, examsList: [],
+      userName: "",
+      theme: "auto",
+      accentColor: "#30b0c7",
+      patternShape: "circle",
+      glowIntensity: 0.010,
+      examsList: [],
       timetable: { 1: [], 2: [], 3: [], 4: [], 5: [] },
       subjectColors: {},
       homework: [],
@@ -1318,11 +1426,12 @@
     };
 
     let selectedEmoji = "📚"; let selectedEditEmoji = "📚";
-    let selectedNewSubjectColor = "#007aff";
-    let selectedEditSubjectColor = "#007aff";
+    let selectedNewSubjectColor = "#30b0c7";
+    let selectedEditSubjectColor = "#30b0c7";
     let currentSlide = 0; let currentActiveSubjectName = "";
     let pendingGrade = ""; let pendingCategory = "klausuren"; let pendingSubject = ""; let pendingUnknownSubjectName = "";
     let wizardSelectedSubject = "";
+    let wizardMode = "days";
     let targetDeleteSub = ""; let targetDeleteCat = ""; let targetDeleteIdx = -1;
     let targetEditSub = ""; let targetEditCat = ""; let targetEditIdx = -1;
     let targetDeleteExamIndex = null;
@@ -1334,6 +1443,7 @@
     let pendingHomeworkCreateSubject = null;
     let subjectsData = [];
     let currentPosWidgetId = null;
+    let currentSelectedPosition = -1;
     let activeHwFilter = "all";
     let pulseSubjectName = null;
     let deferredInstallPrompt = null;
@@ -1343,12 +1453,16 @@
     const MONTH_NAMES_SHORT = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
     const DEFAULT_SLIDE_ORDER = ["avg", "exam", "cal", "hw"];
     const DEFAULT_PRINT_OPTIONS = { avg: true, subjects: true, exams: true, homework: true, doneHw: false };
-    const SUBJECT_COLOR_PALETTE = ["#007aff", "#5856d6", "#af52de", "#ff2d55", "#ff9500", "#ffcc00", "#34c759", "#30b0c7", "#e06c75", "#98c379", "#61afef", "#c678dd", "#d19a66", "#56b6c2", "#abb2bf", "#0d9488"];
+    const SUBJECT_COLOR_PALETTE = ["#30b0c7", "#007aff", "#5856d6", "#af52de", "#ff2d55", "#ff9500", "#ffcc00", "#34c759", "#e06c75", "#98c379", "#61afef", "#c678dd", "#d19a66", "#56b6c2", "#abb2bf", "#0d9488"];
 
     function initApp() {
       const saved = localStorage.getItem("gradeflow_settings");
+      const isFirstLoad = !saved;
+
       updateThemeColorMeta();
+
       if (saved) { try { appSettings = { ...appSettings, ...JSON.parse(saved) }; } catch (e) {} }
+
       if (!appSettings.slideEnabled || Object.keys(appSettings.slideEnabled).length === 0) {
         appSettings.slideEnabled = { avg: true, exam: true, cal: true, hw: true };
       }
@@ -1362,6 +1476,8 @@
       if (!appSettings.subjectColors) appSettings.subjectColors = {};
       if (!appSettings.homework) appSettings.homework = [];
       if (!appSettings.weights) appSettings.weights = {};
+      if (typeof appSettings.glowIntensity !== "number") appSettings.glowIntensity = 0.010;
+      if (typeof appSettings.accentColor !== "string") appSettings.accentColor = "#30b0c7";
       if (!appSettings.printOptions || typeof appSettings.printOptions !== "object") {
         appSettings.printOptions = { ...DEFAULT_PRINT_OPTIONS };
       } else {
@@ -1374,24 +1490,15 @@
       }
 
       const savedSubjects = localStorage.getItem("gradeflow_subjects");
-      if (savedSubjects) { try { subjectsData = JSON.parse(savedSubjects); } catch (e) {} }
-      if (subjectsData.length === 0 && !localStorage.getItem("gradeflow_initialized")) {
-        subjectsData = [
-          { name: "Mathematik", emoji: "📐", klausuren: [], tests: [], meta: "0 Klausuren, 0 Tests" },
-          { name: "Deutsch", emoji: "📖", klausuren: [], tests: [], meta: "0 Klausuren, 0 Tests" }
-        ];
-        localStorage.setItem("gradeflow_initialized", "true");
-        saveSubjects();
-      }
+      if (savedSubjects) { try { subjectsData = JSON.parse(savedSubjects); } catch (e) { subjectsData = []; } }
+      else subjectsData = [];
 
       if (appSettings.userName) document.getElementById("nameInput").value = appSettings.userName;
       if (appSettings.theme === "dark") document.body.classList.add("dark-mode");
       else if (appSettings.theme === "auto" && window.matchMedia("(prefers-color-scheme: dark)").matches) document.body.classList.add("dark-mode");
 
-      if (appSettings.glowIntensity !== undefined) {
-        document.getElementById("glowIntensitySlider").value = appSettings.glowIntensity;
-        document.documentElement.style.setProperty("--glow-intensity", appSettings.glowIntensity);
-      }
+      document.getElementById("glowIntensitySlider").value = appSettings.glowIntensity;
+      document.documentElement.style.setProperty("--glow-intensity", appSettings.glowIntensity);
 
       setupPWA();
       buildDatePickerOptions();
@@ -1440,110 +1547,58 @@
         e.preventDefault();
         deferredInstallPrompt = e;
       });
+
+      if (isFirstLoad) {
+        document.body.classList.add("first-load");
+        setTimeout(() => document.body.classList.remove("first-load"), 3200);
+      }
     }
 
-    /* ============================================================
-       PWA
-       ============================================================ */
-function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
-  const rx = rounded ? 112 : 0;
-  // Inhalt so skalieren, dass er mittig und mit Rand im Icon sitzt
-  const content = withText
-    ? 'translate(256 256) scale(0.78) translate(-252.5 -284)'
-    : 'translate(256 256) scale(0.95) translate(-252.5 -244)';
+    /* ============ PWA ============ */
+    function buildNotioIconSVG() {
+      return `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+        <defs>
+          <linearGradient id="bg" x1="0" y1="0" x2="0.6" y2="1">
+            <stop offset="0%" stop-color="#1a1f2c"/>
+            <stop offset="60%" stop-color="#11151d"/>
+            <stop offset="100%" stop-color="#0a0d13"/>
+          </linearGradient>
+          <radialGradient id="glow" cx="0.45" cy="0.35" r="0.65">
+            <stop offset="0%" stop-color="#2a6f88" stop-opacity="0.85"/>
+            <stop offset="55%" stop-color="#155a73" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="#0a0d13" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="nGrad" x1="0" y1="0" x2="0.3" y2="1">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="100%" stop-color="#c9e4ee"/>
+          </linearGradient>
+          <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="5"/>
+            <feOffset dx="0" dy="5"/>
+            <feComponentTransfer><feFuncA type="linear" slope="0.5"/></feComponentTransfer>
+            <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <defs>
-    <!-- Schwarzer Glas-Hintergrund -->
-    <linearGradient id="bg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="300" y2="512">
-      <stop offset="0" stop-color="#262a33"/>
-      <stop offset="0.5" stop-color="#0c0e13"/>
-      <stop offset="1" stop-color="#000000"/>
-    </linearGradient>
+        <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+        <rect width="512" height="512" rx="112" fill="url(#glow)"/>
 
-    <!-- Glanz oben (Glas-Reflexion) -->
-    <linearGradient id="sheen" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="250">
-      <stop offset="0" stop-color="#ffffff" stop-opacity="0.20"/>
-      <stop offset="1" stop-color="#ffffff" stop-opacity="0.02"/>
-    </linearGradient>
+        <g filter="url(#shadow)">
+          <g fill="none" stroke="url(#nGrad)" stroke-width="52" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M 138 400 L 138 148"/>
+            <path d="M 138 148 L 328 400"/>
+            <path d="M 328 400 L 328 148"/>
+          </g>
 
-    <!-- Milchglas-Fläche hinter dem N -->
-    <linearGradient id="panel" gradientUnits="userSpaceOnUse" x1="0" y1="36" x2="0" y2="476">
-      <stop offset="0" stop-color="#ffffff" stop-opacity="0.11"/>
-      <stop offset="1" stop-color="#ffffff" stop-opacity="0.02"/>
-    </linearGradient>
-
-    <!-- Heller Glasrand -->
-    <linearGradient id="rim" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="512" y2="512">
-      <stop offset="0" stop-color="#ffffff" stop-opacity="0.60"/>
-      <stop offset="0.4" stop-color="#ffffff" stop-opacity="0.08"/>
-      <stop offset="0.7" stop-color="#ffffff" stop-opacity="0.04"/>
-      <stop offset="1" stop-color="#ffffff" stop-opacity="0.30"/>
-    </linearGradient>
-
-    <!-- N-Verlauf: userSpaceOnUse, weil senkrechte Linien keine Bounding-Box-Breite haben
-         und sonst gar nicht gezeichnet werden (das war der Grund für den einzelnen Strich) -->
-    <linearGradient id="nGrad" gradientUnits="userSpaceOnUse" x1="0" y1="122" x2="0" y2="426">
-      <stop offset="0" stop-color="#ffffff" stop-opacity="0.96"/>
-      <stop offset="1" stop-color="#c9d9f0" stop-opacity="0.62"/>
-    </linearGradient>
-
-    <linearGradient id="nSheen" gradientUnits="userSpaceOnUse" x1="0" y1="122" x2="0" y2="300">
-      <stop offset="0" stop-color="#ffffff" stop-opacity="0.75"/>
-      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
-    </linearGradient>
-
-    <linearGradient id="hatBase" gradientUnits="userSpaceOnUse" x1="0" y1="96" x2="0" y2="158">
-      <stop offset="0" stop-color="#eef3fb"/>
-      <stop offset="1" stop-color="#9fb2cf"/>
-    </linearGradient>
-
-    <clipPath id="clipBg"><rect width="512" height="512" rx="${rx}"/></clipPath>
-
-    <!-- N als Maske, damit der Glanz nur auf dem N liegt -->
-    <mask id="nMask" maskUnits="userSpaceOnUse" x="0" y="0" width="512" height="512">
-      <path d="M 138 400 L 138 148 L 328 400 L 328 148" fill="none" stroke="#fff"
-            stroke-width="52" stroke-linecap="round" stroke-linejoin="round"/>
-    </mask>
-
-    <!-- Sanftes Leuchten um das N -->
-    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
-      <feDropShadow dx="0" dy="0" stdDeviation="12" flood-color="#ffffff" flood-opacity="0.16"/>
-    </filter>
-  </defs>
-
-  <!-- Hintergrund -->
-  <rect width="512" height="512" rx="${rx}" fill="url(#bg)"/>
-  <path d="M 0 0 H 512 V 170 Q 256 250 0 170 Z" fill="url(#sheen)" clip-path="url(#clipBg)"/>
-
-  <!-- Glas-Karte -->
-  <rect x="36" y="36" width="440" height="440" rx="84" fill="url(#panel)" stroke="url(#rim)" stroke-width="2"/>
-  ${rounded ? `<rect x="1.5" y="1.5" width="509" height="509" rx="110.5" fill="none" stroke="url(#rim)" stroke-width="3"/>` : ''}
-
-  <g transform="${content}">
-    <!-- N: ein durchgehender Pfad in Glas-Optik -->
-    <g filter="url(#glow)">
-      <path d="M 138 400 L 138 148 L 328 400 L 328 148" fill="none" stroke="url(#nGrad)"
-            stroke-width="52" stroke-linecap="round" stroke-linejoin="round"/>
-    </g>
-    <rect x="0" y="0" width="512" height="512" fill="url(#nSheen)" mask="url(#nMask)"/>
-
-    <!-- Absolventenhut mit dunkler Kontur, damit er sich vom N abhebt -->
-    <g stroke="#0a0d13" stroke-width="5" stroke-linejoin="round" paint-order="stroke">
-      <path d="M 290 108 L 290 134 Q 290 158, 328 158 Q 366 158, 366 134 L 366 108 L 328 130 Z" fill="url(#hatBase)"/>
-      <path d="M 268 96 L 328 62 L 388 96 L 328 130 Z" fill="#ffffff"/>
-    </g>
-    <line x1="388" y1="96" x2="388" y2="132" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
-    <circle cx="388" cy="137" r="5" fill="#ffffff"/>
-
-    ${withText ? `<g fill="#ffffff" font-family="Verdana, Geneva, sans-serif" font-weight="bold" text-anchor="middle">
-      <text x="256" y="474" font-size="40">Notio</text>
-      <text x="256" y="506" font-size="26" fill-opacity="0.72">Schulplaner</text>
-    </g>` : ''}
-  </g>
-</svg>`;
-}
-
+          <g fill="#ffffff">
+            <path d="M 268 96 L 328 62 L 388 96 L 328 130 Z"/>
+            <path d="M 290 108 L 290 134 Q 290 158, 328 158 Q 366 158, 366 134 L 366 108 L 328 130 Z"/>
+          </g>
+          <line x1="388" y1="96" x2="388" y2="132" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="388" cy="137" r="5" fill="#ffffff"/>
+        </g>
+      </svg>`;
+    }
 
     async function renderIconToPng(size) {
       const svg = buildNotioIconSVG();
@@ -1565,7 +1620,6 @@ function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
     }
 
     async function setupPWA() {
-      // apple-touch-icon + favicon setzen
       const png180 = await renderIconToPng(180);
       const png192 = await renderIconToPng(192);
       const png512 = await renderIconToPng(512);
@@ -1573,7 +1627,6 @@ function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
       if (png180) document.getElementById("appleIcon").href = png180;
       if (png32) document.getElementById("faviconLink").href = png32;
 
-      // Manifest dynamisch als Blob-URL
       const manifest = {
         name: "Notio – Notenmanager",
         short_name: "Notio",
@@ -1600,24 +1653,20 @@ function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
     }
 
     async function showInstallHint() {
-      // Wenn Chrome/Edge einen nativen Prompt anbietet → nutzen
       if (deferredInstallPrompt) {
         deferredInstallPrompt.prompt();
         try { await deferredInstallPrompt.userChoice; } catch (e) {}
         deferredInstallPrompt = null;
         return;
       }
-
-      // Sonst Anleitung je nach Plattform
       const ua = navigator.userAgent;
       const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
       const isAndroid = /Android/.test(ua);
-
       let html = "";
       if (isStandalone()) {
-        html = "Du nutzt Notio bereits als installierte App. ❤️";
+        html = "Du nutzt Notio bereits als installierte App.";
       } else if (isIOS) {
-        html = `So installierst du Notio auf dem iPhone/iPad:<br><br>
+        html = `So installierst du Notio auf iPhone/iPad:<br><br>
           1. Tippe unten in Safari auf das <strong>Teilen-Symbol</strong> (□ mit Pfeil nach oben).<br>
           2. Scrolle und wähle <strong>„Zum Home-Bildschirm"</strong>.<br>
           3. Tippe oben rechts auf <strong>„Hinzufügen"</strong>.<br><br>
@@ -1629,10 +1678,8 @@ function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
           3. Bestätige mit <strong>„Installieren"</strong>.<br><br>
           Danach erscheint Notio als Icon auf dem Homescreen.`;
       } else {
-        html = `So installierst du Notio:<br><br>
-          Öffne diese Seite auf dem Handy in Safari (iPhone) oder Chrome (Android) und wähle im Browser-Menü <strong>„Zum Home-Bildschirm"</strong> bzw. <strong>„App installieren"</strong>.`;
+        html = `Öffne diese Seite auf dem Handy in Safari (iPhone) oder Chrome (Android) und wähle im Browser-Menü <strong>„Zum Home-Bildschirm"</strong> bzw. <strong>„App installieren"</strong>.`;
       }
-
       document.getElementById("installHintText").innerHTML = html;
       document.body.classList.add("modal-open");
       document.getElementById("installHintModal").classList.add("open");
@@ -1643,6 +1690,7 @@ function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
       checkModalState();
     }
 
+    /* ============ Menü / UI ============ */
     function closeGlassMenu() {
       const menu = document.getElementById("glassMenu");
       if (menu.classList.contains("open")) {
@@ -1668,7 +1716,7 @@ function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
 
     function updateThemeColorMeta() {
       const isDark = document.body.classList.contains("dark-mode");
-      const accent = (appSettings && typeof appSettings.accentColor === "string") ? appSettings.accentColor.toLowerCase() : "#ffffff";
+      const accent = (appSettings && typeof appSettings.accentColor === "string") ? appSettings.accentColor.toLowerCase() : "#30b0c7";
       const hasAccent = accent !== "#ffffff" && !!hexToRgb(accent);
       const mix = isDark ? 0.38 : 0.30;
       const topBase = isDark ? "#07080c" : "#e2e6ee";
@@ -1850,9 +1898,9 @@ function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
         empty.className = "subject-empty-card";
         empty.onclick = () => openSubjectModal();
         empty.innerHTML = `
-          <span class="sec-emoji">📚</span>
-          <div class="sec-title">Noch keine Fächer</div>
-          <div class="sec-sub">Leg dein erstes Fach an, z. B. Mathematik, Deutsch oder Englisch.</div>
+          <span class="sec-emoji">✨</span>
+          <div class="sec-title">Willkommen bei Notio</div>
+          <div class="sec-sub">Leg dein erstes Fach an, z. B. Mathematik, Deutsch oder Englisch. Danach kannst du Noten eintragen, Klausuren planen und deinen Schnitt beobachten.</div>
           <div class="btn-primary" style="display: inline-block; padding: 9px 18px;">+ Erstes Fach anlegen</div>
         `;
         list.appendChild(empty);
@@ -2233,31 +2281,18 @@ function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
       highlightSelectedPickerItem(colId);
     }
 
-    let scrollRafPending = false;
+    let pickerScrollTimeouts = {};
     function onPickerScroll(prefix) {
-      if (scrollRafPending) return;
-      scrollRafPending = true;
-      requestAnimationFrame(() => { highlightSelectedPickerItem('col' + prefix); updateTimePreview(); scrollRafPending = false; });
-    }
-
-    function onPickerRelease(prefix) {
       const colId = 'col' + prefix;
-      const col = document.getElementById(colId);
-      if (!col) return;
-      setTimeout(() => {
-        const items = col.querySelectorAll('.time-picker-item');
-        const center = col.scrollTop + col.clientHeight / 2;
-        let closest = null, md = Infinity;
-        items.forEach(item => {
-          const diff = Math.abs(center - (item.offsetTop + item.clientHeight / 2));
-          if (diff < md) { md = diff; closest = item; }
-        });
-        if (closest) {
-          const target = closest.offsetTop - col.clientHeight / 2 + closest.clientHeight / 2;
-          col.scrollTo({ top: target, behavior: "smooth" });
-          setTimeout(() => { highlightSelectedPickerItem(colId); updateTimePreview(); }, 300);
-        }
-      }, 60);
+      if (!pickerScrollTimeouts[colId]) {
+        pickerScrollTimeouts[colId] = true;
+        requestAnimationFrame(() => { highlightSelectedPickerItem(colId); pickerScrollTimeouts[colId] = false; });
+      }
+      clearTimeout(pickerScrollTimeouts[colId + '_settle']);
+      pickerScrollTimeouts[colId + '_settle'] = setTimeout(() => {
+        highlightSelectedPickerItem(colId);
+        updateTimePreview();
+      }, 120);
     }
 
     function highlightSelectedPickerItem(colId) {
@@ -2294,6 +2329,23 @@ function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
     function confirmTtSlot() {
       const subj = document.getElementById("ttPromptSubject").value.trim();
       if (!subj) return;
+
+      const existingSub = subjectsData.find(s => s.name.toLowerCase() === subj.toLowerCase());
+      if (!existingSub) {
+        const newSub = {
+          name: subj,
+          emoji: "📚",
+          klausuren: [],
+          tests: [],
+          meta: "0 Klausuren, 0 Tests"
+        };
+        subjectsData.push(newSub);
+        saveSubjects();
+        if (!appSettings.subjectColors) appSettings.subjectColors = {};
+        appSettings.subjectColors[subj] = currentTtColor;
+        saveSettings();
+      }
+
       const sh = getSelectedPickerValue('StartHour'), sm = getSelectedPickerValue('StartMin');
       const eh = getSelectedPickerValue('EndHour'), em = getSelectedPickerValue('EndMin');
       const newSlot = { subject: subj, time: `${sh}:${sm} - ${eh}:${em}`, color: currentTtColor };
@@ -2301,6 +2353,7 @@ function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
       else appSettings.timetable[activeTimetableDay].push(newSlot);
       saveSettings();
       setColorForSubject(subj, currentTtColor);
+      refreshUI();
       closeTtSlotPrompt();
     }
 
@@ -2845,14 +2898,14 @@ function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
       const order = appSettings.slideOrder || [...DEFAULT_SLIDE_ORDER];
       const orderedDefs = order.map(id => allDefs.find(d => d.id === id)).filter(Boolean);
 
-      orderedDefs.forEach(d => {
+      orderedDefs.forEach((d, idx) => {
         const isOn = appSettings.slideEnabled[d.id] !== false;
-        const posNum = appSettings.slideOrder.indexOf(d.id) + 1;
+        const posNum = idx + 1;
         const item = document.createElement("div");
         item.className = "widget-toggle-item" + (isOn ? " active" : "");
         item.innerHTML = `
           <div class="widget-toggle-label" data-open-pos="1">
-            <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:7px;background:rgba(120,120,128,0.20);font-size:0.7rem;font-weight:800;flex-shrink:0;">${posNum}</span>
+            <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg, var(--glass-sheen-a), var(--glass-sheen-b)), var(--input-bg);border:1px solid var(--glass-border);font-size:0.72rem;font-weight:800;flex-shrink:0;">${posNum}</span>
             <span>${d.label}</span>
           </div>
           <div class="widget-toggle-switch"></div>
@@ -2861,7 +2914,7 @@ function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
         const labelEl = item.querySelector("[data-open-pos]");
         labelEl.addEventListener("click", (e) => {
           e.stopPropagation();
-          openWidgetPosModal(d.id);
+          openWidgetSelectModalForPosition(posNum);
         });
 
         item.querySelector(".widget-toggle-switch").addEventListener("click", (e) => {
@@ -2879,52 +2932,92 @@ function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
       });
     }
 
-    function openWidgetPosModal(widgetId) {
-      currentPosWidgetId = widgetId;
-      const allDefs = getSlideDefinitions();
-      const def = allDefs.find(d => d.id === widgetId);
-      if (!def) return;
+    function openWidgetSelectModalForPosition(position) {
+      currentSelectedPosition = position;
+      renderWidgetPosNumbers();
+      document.getElementById("widgetPosIcon").textContent = "🎛️";
+      document.getElementById("widgetPosTitle").textContent = "Reihenfolge";
+      document.getElementById("widgetPosSubtitle").textContent = `Position ${position} gewählt`;
+      document.getElementById("widgetPosHint").textContent = "Wähle die neue Reihenfolge. Tippe auf eine Nummer, um sie gegen die aktuelle Position zu tauschen.";
+      document.getElementById("widgetPosOverlay").classList.add("open");
+    }
 
-      document.getElementById("widgetPosIcon").textContent = def.icon;
-      document.getElementById("widgetPosTitle").textContent = def.label.replace(/^[^\s]+\s/, "");
-
+    function renderWidgetPosNumbers() {
       const container = document.getElementById("widgetPosNumbers");
       container.innerHTML = "";
-
+      const allDefs = getSlideDefinitions();
       const order = appSettings.slideOrder || [...DEFAULT_SLIDE_ORDER];
-      const currentPos = order.indexOf(widgetId) + 1;
 
-      for (let i = 1; i <= order.length; i++) {
-        const targetId = order[i - 1];
-        const targetDef = allDefs.find(d => d.id === targetId);
-        if (!targetDef) continue;
+      if (currentSelectedPosition > 0) {
+        const targetIdx = currentSelectedPosition - 1;
+        const targetWidgetId = order[targetIdx];
+        const enabled = appSettings.slideEnabled || {};
 
-        const isCurrent = i === currentPos;
+        const activeWidgets = order.map(id => allDefs.find(d => d.id === id)).filter(Boolean).filter(d => enabled[d.id] !== false);
+
+        activeWidgets.forEach(widget => {
+          const isCurrent = widget.id === targetWidgetId;
+          const item = document.createElement("div");
+          item.className = "widget-pick-item" + (isCurrent ? " disabled" : "");
+          item.innerHTML = `
+            <div class="wp-icon">${widget.icon}</div>
+            <div class="wp-text">
+              <div class="wp-label">${widget.label}</div>
+              <div class="wp-sub">${isCurrent ? "Steht hier bereits" : "Hierhin verschieben"}</div>
+            </div>
+          `;
+          if (!isCurrent) {
+            item.onclick = () => {
+              moveWidgetToPosition(widget.id, currentSelectedPosition);
+            };
+          }
+          container.appendChild(item);
+        });
+
+        const back = document.createElement("button");
+        back.className = "btn-cancel";
+        back.style.cssText = "width: 100%; margin-top: 10px; padding: 10px;";
+        back.textContent = "Zurück";
+        back.onclick = () => { currentSelectedPosition = -1; renderWidgetPosNumbers(); document.getElementById("widgetPosSubtitle").textContent = "Tippe auf eine Position"; document.getElementById("widgetPosHint").textContent = "Tippe auf eine Nummer, um zu wählen, welches Widget dort stehen soll."; };
+        container.appendChild(back);
+
+        return;
+      }
+
+      order.forEach((widgetId, idx) => {
+        const widget = allDefs.find(d => d.id === widgetId);
+        if (!widget) return;
+        const isEnabled = (appSettings.slideEnabled || {})[widget.id] !== false;
         const item = document.createElement("div");
-        item.className = "widget-pos-num-item" + (isCurrent ? " current" : "");
+        item.className = "widget-pos-num-item";
         item.innerHTML = `
-          <div class="num-circle">${i}</div>
+          <div class="num-circle">${idx + 1}</div>
           <div class="num-text">
-            <div class="num-label">${targetDef.label}</div>
-            <div class="num-sub">${isCurrent ? "Aktuelle Position" : "Wird an diese Stelle"}</div>
+            <div class="num-label">${widget.label}</div>
+            <div class="num-sub">${isEnabled ? "Aktiv" : "Inaktiv"}</div>
           </div>
         `;
         item.onclick = () => {
-          if (i === currentPos) { closeWidgetPosModal(); return; }
-          moveWidgetToPosition(currentPosWidgetId, i);
+          currentSelectedPosition = idx + 1;
+          document.getElementById("widgetPosSubtitle").textContent = `Position ${idx + 1}`;
+          document.getElementById("widgetPosHint").textContent = "Was soll an dieser Position stehen?";
+          renderWidgetPosNumbers();
         };
         container.appendChild(item);
-      }
-
-      document.getElementById("widgetPosOverlay").classList.add("open");
+      });
     }
 
     function closeWidgetPosModal() {
       document.getElementById("widgetPosOverlay").classList.remove("open");
       currentPosWidgetId = null;
+      currentSelectedPosition = -1;
       setTimeout(() => {
         const menu = document.getElementById("glassMenu");
-        if (menu && !menu.classList.contains("open")) menu.classList.add("open");
+        if (menu && !menu.classList.contains("open")) {
+          menu.classList.add("open");
+          const cat = document.getElementById("catWidget");
+          if (cat) cat.classList.add("expanded");
+        }
       }, 50);
     }
 
@@ -2933,6 +3026,7 @@ function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
       const currentIdx = order.indexOf(widgetId);
       if (currentIdx === -1) return;
       const newIdx = targetPos - 1;
+      if (newIdx < 0 || newIdx >= order.length) return;
 
       order.splice(currentIdx, 1);
       order.splice(newIdx, 0, widgetId);
@@ -2940,11 +3034,12 @@ function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
       appSettings.slideOrder = order;
       saveSettings();
 
-      setTimeout(() => {
-        closeWidgetPosModal();
-        renderWidgetToggles();
-        applySlideOrder(false);
-      }, 200);
+      currentSelectedPosition = -1;
+      document.getElementById("widgetPosSubtitle").textContent = "Tippe auf eine Position";
+      document.getElementById("widgetPosHint").textContent = "Tippe auf eine Nummer, um zu wählen, welches Widget dort stehen soll.";
+      renderWidgetPosNumbers();
+      renderWidgetToggles();
+      applySlideOrder(false);
     }
 
     function setupSwipeWidget() {
@@ -3041,8 +3136,8 @@ function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
     }
 
     function applyAccentColor(hex) {
-      const n = typeof hex === "string" ? hex.toLowerCase() : "#ffffff";
-      const rgb = hexToRgb(n) || { r: 255, g: 255, b: 255 };
+      const n = typeof hex === "string" ? hex.toLowerCase() : "#30b0c7";
+      const rgb = hexToRgb(n) || { r: 48, g: 176, b: 199 };
       document.documentElement.style.setProperty("--accent-color", n);
       document.documentElement.style.setProperty("--accent-rgb", `${rgb.r}, ${rgb.g}, ${rgb.b}`);
       document.documentElement.style.setProperty("--has-accent", "1");
@@ -3082,7 +3177,7 @@ function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
       const layer = document.getElementById("patternLayer"); if (!layer) return;
       const isDark = document.body.classList.contains("dark-mode");
       const hasAccent = getComputedStyle(document.documentElement).getPropertyValue("--has-accent").trim() === "1";
-      let rgb = hasAccent ? (hexToRgb(appSettings.accentColor || "#ffffff") || { r: 255, g: 255, b: 255 }) : (isDark ? { r: 150, g: 165, b: 200 } : { r: 80, g: 100, b: 155 });
+      let rgb = hasAccent ? (hexToRgb(appSettings.accentColor || "#30b0c7") || { r: 48, g: 176, b: 199 }) : (isDark ? { r: 150, g: 165, b: 200 } : { r: 80, g: 100, b: 155 });
       const t = appSettings.glowIntensity / 0.02;
       const curve = t * t * (3 - 2 * t);
       const alpha = (hasAccent ? (isDark ? 0.40 : 0.48) : (isDark ? 0.22 : 0.35)) * (0.10 + curve * 0.90);
@@ -3131,7 +3226,7 @@ function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
     }
 
     function updateActiveDot(hex) {
-      const n = typeof hex === "string" ? hex.toLowerCase() : "#ffffff";
+      const n = typeof hex === "string" ? hex.toLowerCase() : "#30b0c7";
       document.querySelectorAll("#colorPickerGrid .color-dot").forEach(d => d.classList.toggle("active", rgbToHex(d.style.backgroundColor).toLowerCase() === n));
     }
     function rgbToHex(rgb) {
@@ -3257,9 +3352,9 @@ function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
       if (n) {
         document.getElementById("modalSubjectInput").value = n;
         selectedEmoji = "📚";
-        selectedNewSubjectColor = "#007aff";
+        selectedNewSubjectColor = "#30b0c7";
         document.querySelectorAll("#emojiPickerGrid .emoji-option").forEach((opt, i) => opt.classList.toggle("active", i === 0));
-        document.querySelectorAll("#subjectNewColorPicker .color-dot").forEach((d, i) => d.classList.toggle("active", i === 0));
+        document.querySelectorAll("#subjectNewColorPicker .color-dot").forEach(d => d.classList.toggle("active", rgbToHex(d.style.backgroundColor).toLowerCase() === "#30b0c7"));
         openSubjectModal();
       }
     }
@@ -3308,8 +3403,8 @@ function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
     function openSubjectModal() {
       document.body.classList.add("modal-open");
       document.getElementById("subjectModal").classList.add("open");
-      selectedNewSubjectColor = "#007aff";
-      document.querySelectorAll("#subjectNewColorPicker .color-dot").forEach((d, i) => d.classList.toggle("active", i === 0));
+      selectedNewSubjectColor = "#30b0c7";
+      document.querySelectorAll("#subjectNewColorPicker .color-dot").forEach(d => d.classList.toggle("active", rgbToHex(d.style.backgroundColor).toLowerCase() === "#30b0c7"));
       setTimeout(() => document.getElementById("modalSubjectInput").focus(), 150);
     }
     function closeSubjectModal() { document.getElementById("subjectModal").classList.remove("open"); checkModalState(); document.getElementById("modalSubjectInput").value = ""; }
@@ -3394,10 +3489,14 @@ function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
 
     function openAverageDetailModal() {
       const c = document.getElementById("averageBreakdownList"); c.innerHTML = "";
-      subjectsData.forEach(sub => {
-        const avg = getSubjectAverage(sub);
-        c.innerHTML += `<div class="clean-list-item"><span>${sub.emoji} <strong>${escapeHTML(sub.name)}</strong></span><span style="font-weight: 750;">${avg !== null ? avg.toFixed(1) : "—"}</span></div>`;
-      });
+      if (subjectsData.length === 0) {
+        c.innerHTML = `<div style="text-align:center; font-size:0.8rem; color: var(--text-sub); padding: 20px 0;">Noch keine Fächer angelegt.</div>`;
+      } else {
+        subjectsData.forEach(sub => {
+          const avg = getSubjectAverage(sub);
+          c.innerHTML += `<div class="clean-list-item"><span>${sub.emoji} <strong>${escapeHTML(sub.name)}</strong></span><span style="font-weight: 750;">${avg !== null ? avg.toFixed(1) : "—"}</span></div>`;
+        });
+      }
       document.body.classList.add("modal-open");
       document.getElementById("averageDetailModal").classList.add("open");
     }
@@ -3407,21 +3506,46 @@ function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
       wizardSelectedSubject = "";
       document.getElementById("wizardCustomSubjectInput").value = "";
       const c = document.getElementById("wizardSubjectSelectList"); c.innerHTML = "";
-      subjectsData.forEach(sub => {
-        const btn = document.createElement("button");
-        btn.className = "btn-cancel";
-        btn.style.cssText = "width:100%;text-align:left;padding:10px 14px;display:flex;align-items:center;gap:10px;";
-        btn.innerHTML = `<span style="font-size: 1.1rem;">${sub.emoji}</span> <strong>${escapeHTML(sub.name)}</strong>`;
-        btn.onclick = () => { wizardSelectedSubject = sub.name; closeWizardSubjectModal(); openWizardDaysModal(); };
-        c.appendChild(btn);
-      });
+      if (subjectsData.length === 0) {
+        c.innerHTML = `<div style="font-size:0.8rem; color:var(--text-sub); text-align:center; padding: 12px 0;">Noch keine Fächer angelegt. Gib oben ein neues ein.</div>`;
+      } else {
+        subjectsData.forEach(sub => {
+          const btn = document.createElement("button");
+          btn.className = "btn-cancel";
+          btn.style.cssText = "width:100%;text-align:left;padding:10px 14px;display:flex;align-items:center;gap:10px;";
+          btn.innerHTML = `<span style="font-size: 1.1rem;">${sub.emoji}</span> <strong>${escapeHTML(sub.name)}</strong>`;
+          btn.onclick = () => { wizardSelectedSubject = sub.name; closeWizardSubjectModal(); openWizardDaysModal(); };
+          c.appendChild(btn);
+        });
+      }
       document.body.classList.add("modal-open"); document.getElementById("wizardSubjectModal").classList.add("open");
     }
     function closeWizardSubjectModal() { document.getElementById("wizardSubjectModal").classList.remove("open"); checkModalState(); }
     function confirmWizardSubjectCustom() { const v = document.getElementById("wizardCustomSubjectInput").value.trim(); if (!v) return; wizardSelectedSubject = v; closeWizardSubjectModal(); openWizardDaysModal(); }
+
+    function setWizardMode(mode) {
+      wizardMode = mode;
+      const tabs = document.getElementById("wizardModeTabs");
+      const input = document.getElementById("wizardDaysInput");
+      const tabDays = document.getElementById("wizardTabDays");
+      const tabDate = document.getElementById("wizardTabDate");
+      if (mode === "days") {
+        tabs.classList.remove("mode-date");
+        tabDays.classList.add("active");
+        tabDate.classList.remove("active");
+        input.placeholder = "z. B. 5 (für in 5 Tagen)";
+      } else {
+        tabs.classList.add("mode-date");
+        tabDate.classList.add("active");
+        tabDays.classList.remove("active");
+        input.placeholder = "z. B. 29. September oder 29.9.2026";
+      }
+    }
+
     function openWizardDaysModal() {
       document.getElementById("wizardDaysTitle").textContent = `Klausur für ${wizardSelectedSubject}`;
       document.getElementById("wizardDaysInput").value = "";
+      setWizardMode("days");
       document.body.classList.add("modal-open"); document.getElementById("wizardDaysModal").classList.add("open");
       setTimeout(() => document.getElementById("wizardDaysInput").focus(), 150);
     }
@@ -3499,9 +3623,7 @@ function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
       if (id === "statsModal") closeStatsModal();
     }
 
-    /* ============================================================
-       STATISTIK
-       ============================================================ */
+    /* ============ STATISTIK ============ */
     function openStatsModal() {
       renderStats();
       document.body.classList.add("modal-open");
@@ -3637,7 +3759,7 @@ function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
             <div class="stats-line-wrap">
               <svg class="stats-line-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
                 ${gridLines}
-                <path d="${pathD}" fill="none" stroke="var(--accent-color, #007aff)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.55"/>
+                <path d="${pathD}" fill="none" stroke="var(--accent-color, #30b0c7)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.55"/>
                 ${dots}
               </svg>
             </div>
@@ -3684,9 +3806,7 @@ function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
       container.innerHTML = heroHtml + highlightsHtml + barHtml + lineHtml + distHtml;
     }
 
-    /* ============================================================
-       DRUCK
-       ============================================================ */
+    /* ============ DRUCK ============ */
     function parseLocalDate(v) {
       const m = String(v).match(/^(\d{4})-(\d{2})-(\d{2})/);
       const d = m ? new Date(+m[1], +m[2] - 1, +m[3]) : new Date(v);
@@ -3996,7 +4116,6 @@ function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
       if (!sub) { buildPrintSheet(); return; }
 
       const opts = getSubjectPrintOptions(subjectName);
-
       const accent = getColorForSubject(sub.name);
       sheet.style.setProperty("--ps-accent", accent);
       const rgb = hexToRgb(accent) || { r: 29, g: 29, b: 31 };
@@ -4248,21 +4367,21 @@ function buildNotioIconSVG({ withText = false, rounded = true } = {}) {
     let pendingImport = null;
 
     function parseBackup(obj) {
-  const isObj = v => v && typeof v === "object" && !Array.isArray(v);
-  if (!isObj(obj)) return null;
-  if (isObj(obj.settings)) {
-    let subs = null;
-    if (obj.subjects !== undefined && obj.subjects !== null) {
-      if (!Array.isArray(obj.subjects) || !obj.subjects.every(x => isObj(x) && typeof x.name === "string")) return null;
-      subs = obj.subjects;
+      const isObj = v => v && typeof v === "object" && !Array.isArray(v);
+      if (!isObj(obj)) return null;
+      if (isObj(obj.settings)) {
+        let subs = null;
+        if (obj.subjects !== undefined && obj.subjects !== null) {
+          if (!Array.isArray(obj.subjects) || !obj.subjects.every(x => isObj(x) && typeof x.name === "string")) return null;
+          subs = obj.subjects;
+        }
+        return { settings: obj.settings, subjects: subs, exportedAt: obj.exportedAt || null };
+      }
+      if ("theme" in obj || "accentColor" in obj || "examsList" in obj || "timetable" in obj || "homework" in obj) {
+        return { settings: obj, subjects: null, exportedAt: null };
+      }
+      return null;
     }
-    return { settings: obj.settings, subjects: subs, exportedAt: obj.exportedAt || null };
-  }
-  if ("theme" in obj || "accentColor" in obj || "examsList" in obj || "timetable" in obj || "homework" in obj) {
-    return { settings: obj, subjects: null, exportedAt: null };
-  }
-  return null;
-}
 
     function handleBackupFile(input) {
       const file = input.files && input.files[0];
