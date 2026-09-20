@@ -1445,8 +1445,7 @@
     /* ============================================================
        PWA
        ============================================================ */
-    function buildNotioIconSVG() {
-      // Glas-Look-Icon mit N und Absolventenhut
+   function buildNotioIconSVG() {
       return `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
         <defs>
           <linearGradient id="bg" x1="0" y1="0" x2="0.6" y2="1">
@@ -1459,25 +1458,35 @@
             <stop offset="55%" stop-color="#1a2b48" stop-opacity="0.35"/>
             <stop offset="100%" stop-color="#0a0d13" stop-opacity="0"/>
           </radialGradient>
-          <linearGradient id="nFill" x1="0" y1="0" x2="0.3" y2="1">
+          <linearGradient id="nGrad" x1="0" y1="0" x2="0.3" y2="1">
             <stop offset="0%" stop-color="#ffffff"/>
             <stop offset="100%" stop-color="#c9d9f0"/>
           </linearGradient>
           <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
-            <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
-            <feOffset dx="0" dy="4"/>
-            <feComponentTransfer><feFuncA type="linear" slope="0.55"/></feComponentTransfer>
+            <feGaussianBlur in="SourceAlpha" stdDeviation="5"/>
+            <feOffset dx="0" dy="5"/>
+            <feComponentTransfer><feFuncA type="linear" slope="0.5"/></feComponentTransfer>
             <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
         </defs>
         <rect width="512" height="512" rx="112" fill="url(#bg)"/>
         <rect width="512" height="512" rx="112" fill="url(#glow)"/>
-        <path d="M 168 372 C 168 372 168 190 168 172 C 168 152 190 148 202 162 L 250 235 L 300 172 C 308 162 322 156 330 170 L 358 226 C 366 242 358 254 344 250 L 322 244 C 316 242 312 246 308 252 L 288 288 L 342 364 C 350 376 344 380 334 380 L 302 380 C 292 380 288 376 282 366 L 250 316 L 218 366 C 212 376 208 380 198 380 L 168 380 Z" fill="url(#nFill)" filter="url(#shadow)"/>
+
         <g filter="url(#shadow)">
-          <path d="M 320 128 L 372 108 L 424 128 L 372 148 Z" fill="#ffffff"/>
-          <path d="M 340 138 L 340 158 C 340 166 352 174 372 174 C 392 174 404 166 404 158 L 404 138 L 372 152 Z" fill="#ffffff" opacity="0.92"/>
-          <path d="M 424 128 L 424 158" stroke="#ffffff" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
-          <circle cx="424" cy="162" r="5" fill="#ffffff" opacity="0.85"/>
+          <!-- Klares, fettes N in drei sauberen Strichen -->
+          <g fill="none" stroke="url(#nGrad)" stroke-width="50" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M 150 380 L 150 160"/>
+            <path d="M 150 170 L 310 380"/>
+            <path d="M 310 380 L 310 215 Q 320 165, 370 155"/>
+          </g>
+
+          <!-- Absolventenhut -->
+          <g fill="#ffffff">
+            <path d="M 315 95 L 370 68 L 425 95 L 370 122 Z"/>
+            <path d="M 335 107 L 335 130 Q 335 150, 370 150 Q 405 150, 405 130 L 405 107 L 370 122 Z"/>
+          </g>
+          <line x1="425" y1="95" x2="425" y2="128" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="425" cy="133" r="5" fill="#ffffff"/>
         </g>
       </svg>`;
     }
