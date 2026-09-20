@@ -1445,56 +1445,103 @@
     /* ============================================================
        PWA
        ============================================================ */
-function buildNotioIconSVG() {
+function buildNotioIconSVG({ withText = true, rounded = true } = {}) {
+  const rx = rounded ? 112 : 0;
+  // Inhalt so skalieren, dass er mittig und mit Rand im Icon sitzt
+  const content = withText
+    ? 'translate(256 256) scale(0.78) translate(-252.5 -284)'
+    : 'translate(256 256) scale(0.95) translate(-252.5 -244)';
+
   return `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-    <defs>
-      <!-- Tiefer, dunkler, glass-like Hintergrund-Verlauf -->
-      <linearGradient id="bg" x1="0" y1="0" x2="0.6" y2="1">
-        <stop offset="0%" stop-color="#1a1f2c"/>
-        <stop offset="60%" stop-color="#11151d"/>
-        <stop offset="100%" stop-color="#0a0d13"/>
-      </linearGradient>
-      
-      <!-- Kälterer N-Verlauf, kühler als im Original -->
-      <linearGradient id="nGrad" x1="0" y1="0" x2="0.3" y2="1">
-        <stop offset="0%" stop-color="#ffffff"/>
-        <stop offset="100%" stop-color="#c9d9f0"/>
-      </linearGradient>
-      
-      <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
-        <feGaussianBlur in="SourceAlpha" stdDeviation="5"/>
-        <feOffset dx="0" dy="5"/>
-        <feComponentTransfer><feFuncA type="linear" slope="0.5"/></feComponentTransfer>
-        <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
-      </filter>
-    </defs>
+  <defs>
+    <!-- Schwarzer Glas-Hintergrund -->
+    <linearGradient id="bg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="300" y2="512">
+      <stop offset="0" stop-color="#262a33"/>
+      <stop offset="0.5" stop-color="#0c0e13"/>
+      <stop offset="1" stop-color="#000000"/>
+    </linearGradient>
 
-    <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-    <!-- Blaues Radial-Glühen wurde entfernt -->
+    <!-- Glanz oben (Glas-Reflexion) -->
+    <linearGradient id="sheen" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="250">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.20"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.02"/>
+    </linearGradient>
 
-    <g filter="url(#shadow)">
-      <!-- N in drei klar getrennten, geraden Strichen -->
-      <g fill="none" stroke="url(#nGrad)" stroke-width="52" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M 138 400 L 138 148"/>
-        <path d="M 138 148 L 328 400"/>
-        <path d="M 328 400 L 328 148"/>
-      </g>
+    <!-- Milchglas-Fläche hinter dem N -->
+    <linearGradient id="panel" gradientUnits="userSpaceOnUse" x1="0" y1="36" x2="0" y2="476">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.11"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.02"/>
+    </linearGradient>
 
-      <!-- Absolventenhut direkt auf dem rechten N-Arm -->
-      <g fill="#ffffff">
-        <path d="M 268 96 L 328 62 L 388 96 L 328 130 Z"/>
-        <path d="M 290 108 L 290 134 Q 290 158, 328 158 Q 366 158, 366 134 L 366 108 L 328 130 Z"/>
-      </g>
-      <line x1="388" y1="96" x2="388" y2="132" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
-      <circle cx="388" cy="137" r="5" fill="#ffffff"/>
+    <!-- Heller Glasrand -->
+    <linearGradient id="rim" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="512" y2="512">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.60"/>
+      <stop offset="0.4" stop-color="#ffffff" stop-opacity="0.08"/>
+      <stop offset="0.7" stop-color="#ffffff" stop-opacity="0.04"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.30"/>
+    </linearGradient>
 
-      <!-- Hinzufügen des Textes "Notio Schulplaner" in Weiß -->
-      <g fill="#ffffff" font-family="Verdana, sans-serif" font-weight="bold" text-anchor="middle">
-        <text x="256" y="460" font-size="44">Notio</text>
-        <text x="256" y="495" font-size="28">Schulplaner</text>
-      </g>
+    <!-- N-Verlauf: userSpaceOnUse, weil senkrechte Linien keine Bounding-Box-Breite haben
+         und sonst gar nicht gezeichnet werden (das war der Grund für den einzelnen Strich) -->
+    <linearGradient id="nGrad" gradientUnits="userSpaceOnUse" x1="0" y1="122" x2="0" y2="426">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.96"/>
+      <stop offset="1" stop-color="#c9d9f0" stop-opacity="0.62"/>
+    </linearGradient>
+
+    <linearGradient id="nSheen" gradientUnits="userSpaceOnUse" x1="0" y1="122" x2="0" y2="300">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.75"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+
+    <linearGradient id="hatBase" gradientUnits="userSpaceOnUse" x1="0" y1="96" x2="0" y2="158">
+      <stop offset="0" stop-color="#eef3fb"/>
+      <stop offset="1" stop-color="#9fb2cf"/>
+    </linearGradient>
+
+    <clipPath id="clipBg"><rect width="512" height="512" rx="${rx}"/></clipPath>
+
+    <!-- N als Maske, damit der Glanz nur auf dem N liegt -->
+    <mask id="nMask" maskUnits="userSpaceOnUse" x="0" y="0" width="512" height="512">
+      <path d="M 138 400 L 138 148 L 328 400 L 328 148" fill="none" stroke="#fff"
+            stroke-width="52" stroke-linecap="round" stroke-linejoin="round"/>
+    </mask>
+
+    <!-- Sanftes Leuchten um das N -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="0" stdDeviation="12" flood-color="#ffffff" flood-opacity="0.16"/>
+    </filter>
+  </defs>
+
+  <!-- Hintergrund -->
+  <rect width="512" height="512" rx="${rx}" fill="url(#bg)"/>
+  <path d="M 0 0 H 512 V 170 Q 256 250 0 170 Z" fill="url(#sheen)" clip-path="url(#clipBg)"/>
+
+  <!-- Glas-Karte -->
+  <rect x="36" y="36" width="440" height="440" rx="84" fill="url(#panel)" stroke="url(#rim)" stroke-width="2"/>
+  ${rounded ? `<rect x="1.5" y="1.5" width="509" height="509" rx="110.5" fill="none" stroke="url(#rim)" stroke-width="3"/>` : ''}
+
+  <g transform="${content}">
+    <!-- N: ein durchgehender Pfad in Glas-Optik -->
+    <g filter="url(#glow)">
+      <path d="M 138 400 L 138 148 L 328 400 L 328 148" fill="none" stroke="url(#nGrad)"
+            stroke-width="52" stroke-linecap="round" stroke-linejoin="round"/>
     </g>
-  </svg>`;
+    <rect x="0" y="0" width="512" height="512" fill="url(#nSheen)" mask="url(#nMask)"/>
+
+    <!-- Absolventenhut mit dunkler Kontur, damit er sich vom N abhebt -->
+    <g stroke="#0a0d13" stroke-width="5" stroke-linejoin="round" paint-order="stroke">
+      <path d="M 290 108 L 290 134 Q 290 158, 328 158 Q 366 158, 366 134 L 366 108 L 328 130 Z" fill="url(#hatBase)"/>
+      <path d="M 268 96 L 328 62 L 388 96 L 328 130 Z" fill="#ffffff"/>
+    </g>
+    <line x1="388" y1="96" x2="388" y2="132" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="388" cy="137" r="5" fill="#ffffff"/>
+
+    ${withText ? `<g fill="#ffffff" font-family="Verdana, Geneva, sans-serif" font-weight="bold" text-anchor="middle">
+      <text x="256" y="474" font-size="40">Notio</text>
+      <text x="256" y="506" font-size="26" fill-opacity="0.72">Schulplaner</text>
+    </g>` : ''}
+  </g>
+</svg>`;
 }
 
 
